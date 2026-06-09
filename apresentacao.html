@@ -1,0 +1,1204 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap">
+    <title>Shark Tank ??" Unasp-EC | Sistemas de Informa&ccedil;&atilde;o</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #040d15;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            color: #fff;
+        }
+
+        /* ?.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.?
+           TELA INICIAL
+        ?.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.? */
+        #landing {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+            background:
+                radial-gradient(ellipse 90% 55% at 50% 38%, #071e32 0%, #040d15 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* decorative glow lines */
+        #landing::before,
+        #landing::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        #landing::before {
+            width: 700px; height: 700px;
+            border: 1px solid rgba(27, 184, 216, 0.06);
+            top: 50%; transform: translate(-50%, -50%);
+        }
+        #landing::after {
+            width: 400px; height: 400px;
+            border: 1px solid rgba(27, 184, 216, 0.1);
+            top: 50%; transform: translate(-50%, -50%);
+        }
+
+        #landing img.shark-logo {
+            width: 280px;
+            max-width: 80vw;
+            /* inverte branco??'preto e mantm o ciano original */
+            filter: invert(1) hue-rotate(180deg);
+            animation: float 3.5s ease-in-out infinite;
+            position: relative;
+            z-index: 1;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50%       { transform: translateY(-14px); }
+        }
+
+        .course-badge {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            background: rgba(27, 184, 216, 0.07);
+            border: 1px solid rgba(27, 184, 216, 0.22);
+            border-radius: 50px;
+            padding: 7px 22px 7px 12px;
+            z-index: 1;
+        }
+
+        .course-badge img {
+            height: 26px;
+            filter: brightness(0) invert(1); /* logo unasp branca */
+        }
+
+        .course-badge span {
+            font-size: 0.76rem;
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            color: #7dcce8;
+        }
+
+        #btn-start {
+            padding: 15px 52px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: #fff;
+            background: linear-gradient(135deg, #1bb8d8 0%, #0c7fa8 100%);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            box-shadow: 0 0 50px rgba(27, 184, 216, 0.28);
+            transition: all 0.25s ease;
+            z-index: 1;
+        }
+
+        #btn-start:hover {
+            box-shadow: 0 0 80px rgba(27, 184, 216, 0.55);
+            transform: scale(1.05);
+        }
+
+        #btn-start:active { transform: scale(0.97); }
+
+        .hint-text {
+            font-size: 0.67rem;
+            color: #1f3d50;
+            letter-spacing: 0.12em;
+            margin-top: -8px;
+            z-index: 1;
+        }
+
+        /* ?.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.?
+           MODO APRESENTA???fO
+        ?.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.? */
+        #presentation {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: #000;
+            z-index: 9999;
+        }
+
+        #presentation.active { display: block; }
+
+        #slides-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        /* ?"??"? Slides ?"??"? */
+        .slide {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            will-change: transform, opacity;
+        }
+
+        .slide.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        /* ?"??"? Transi&otilde;es cinemticas direcionais ?"??"? */
+        /* ── SAÍDA ── */
+        @keyframes outToLeft        { from{opacity:1;transform:translateX(0) scale(1);filter:brightness(1)}       to{opacity:0;transform:translateX(-7%) scale(0.93);filter:brightness(0.4)} }
+        @keyframes outToRight       { from{opacity:1;transform:translateX(0) scale(1);filter:brightness(1)}       to{opacity:0;transform:translateX(7%)  scale(0.93);filter:brightness(0.4)} }
+        @keyframes outZoomFade      { from{opacity:1;transform:scale(1);filter:brightness(1) blur(0px)}           to{opacity:0;transform:scale(1.08);filter:brightness(0.3) blur(4px)} }
+        @keyframes outShrinkFade    { from{opacity:1;transform:scale(1);filter:brightness(1)}                     to{opacity:0;transform:scale(0.88);filter:brightness(0.3)} }
+        @keyframes outSlideUp       { from{opacity:1;transform:translateY(0) scale(1);filter:brightness(1)}       to{opacity:0;transform:translateY(-5%) scale(0.95);filter:brightness(0.4)} }
+        @keyframes outSlideDown     { from{opacity:1;transform:translateY(0) scale(1);filter:brightness(1)}       to{opacity:0;transform:translateY(5%)  scale(0.95);filter:brightness(0.4)} }
+        @keyframes outFlipLeft      { from{opacity:1;transform:perspective(1200px) rotateY(0deg)}                 to{opacity:0;transform:perspective(1200px) rotateY(-15deg) scale(0.9)} }
+
+        /* ── ENTRADA ── */
+        @keyframes inFromRight      { from{opacity:0;transform:translateX(7%)  scale(1.05);filter:brightness(0.4)} to{opacity:1;transform:translateX(0) scale(1);filter:brightness(1)} }
+        @keyframes inFromLeft       { from{opacity:0;transform:translateX(-7%) scale(1.05);filter:brightness(0.4)} to{opacity:1;transform:translateX(0) scale(1);filter:brightness(1)} }
+        @keyframes inZoomFade       { from{opacity:0;transform:scale(0.9);filter:brightness(0.3) blur(6px)}        to{opacity:1;transform:scale(1);filter:brightness(1) blur(0px)} }
+        @keyframes inExpandFade     { from{opacity:0;transform:scale(1.1);filter:brightness(0.3)}                  to{opacity:1;transform:scale(1);filter:brightness(1)} }
+        @keyframes inSlideUp        { from{opacity:0;transform:translateY(6%) scale(1.03);filter:brightness(0.4)}  to{opacity:1;transform:translateY(0) scale(1);filter:brightness(1)} }
+        @keyframes inSlideDown      { from{opacity:0;transform:translateY(-6%) scale(1.03);filter:brightness(0.4)} to{opacity:1;transform:translateY(0) scale(1);filter:brightness(1)} }
+        @keyframes inFlipRight      { from{opacity:0;transform:perspective(1200px) rotateY(15deg) scale(0.9)}      to{opacity:1;transform:perspective(1200px) rotateY(0deg) scale(1)} }
+
+        /* Classes aplicadas via JS */
+        .slide.anim-out-left        { animation: outToLeft     0.85s cubic-bezier(0.4,0,0.6,1) forwards; pointer-events:none; }
+        .slide.anim-out-right       { animation: outToRight    0.85s cubic-bezier(0.4,0,0.6,1) forwards; pointer-events:none; }
+        .slide.anim-out-zoom        { animation: outZoomFade   0.85s cubic-bezier(0.4,0,0.6,1) forwards; pointer-events:none; }
+        .slide.anim-out-shrink      { animation: outShrinkFade 0.85s cubic-bezier(0.4,0,0.6,1) forwards; pointer-events:none; }
+        .slide.anim-out-up          { animation: outSlideUp    0.85s cubic-bezier(0.4,0,0.6,1) forwards; pointer-events:none; }
+        .slide.anim-out-down        { animation: outSlideDown  0.85s cubic-bezier(0.4,0,0.6,1) forwards; pointer-events:none; }
+        .slide.anim-out-flip        { animation: outFlipLeft   0.85s cubic-bezier(0.4,0,0.6,1) forwards; pointer-events:none; }
+
+        .slide.anim-in-right        { animation: inFromRight   0.95s cubic-bezier(0.16,1,0.3,1) forwards; }
+        .slide.anim-in-left         { animation: inFromLeft    0.95s cubic-bezier(0.16,1,0.3,1) forwards; }
+        .slide.anim-in-zoom         { animation: inZoomFade    0.95s cubic-bezier(0.16,1,0.3,1) forwards; }
+        .slide.anim-in-expand       { animation: inExpandFade  0.95s cubic-bezier(0.16,1,0.3,1) forwards; }
+        .slide.anim-in-up           { animation: inSlideUp     0.95s cubic-bezier(0.16,1,0.3,1) forwards; }
+        .slide.anim-in-down         { animation: inSlideDown   0.95s cubic-bezier(0.16,1,0.3,1) forwards; }
+        .slide.anim-in-flip         { animation: inFlipRight   0.95s cubic-bezier(0.16,1,0.3,1) forwards; }
+
+        /* aliases antigos (manter compatibilidade) */
+        .slide.leaving-left   { animation: outToLeft  0.85s cubic-bezier(0.4,0,0.6,1) forwards; pointer-events:none; }
+        .slide.leaving-right  { animation: outToRight 0.85s cubic-bezier(0.4,0,0.6,1) forwards; pointer-events:none; }
+        .slide.entering-from-right { animation: inFromRight 0.95s cubic-bezier(0.16,1,0.3,1) forwards; }
+        .slide.entering-from-left  { animation: inFromLeft  0.95s cubic-bezier(0.16,1,0.3,1) forwards; }
+
+        .slide-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; /* exibe o banner completo, sem corte */
+            background: #000;
+        }
+
+        /* ?"??"? Setas de navega&ccedil;&atilde;o ?"??"? */
+        .nav-btn {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 50px;
+            height: 86px;
+            background: rgba(27, 184, 216, 0.08);
+            border: 1px solid rgba(27, 184, 216, 0.22);
+            border-radius: 4px;
+            color: #1bb8d8;
+            font-size: 1.9rem;
+            cursor: pointer;
+            z-index: 10001;
+            opacity: 0;
+            transition: opacity 0.2s, background 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #presentation.active:hover .nav-btn { opacity: 1; }
+        .nav-btn:hover { background: rgba(27, 184, 216, 0.28) !important; }
+        .nav-btn.hidden { visibility: hidden; pointer-events: none; }
+
+        #nav-prev { left: 10px; }
+        #nav-next { right: 10px; }
+
+        /* ?"??"? Contador de slides ?"??"? */
+        #slide-info {
+            position: fixed;
+            bottom: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.68rem;
+            color: rgba(255, 255, 255, 0.2);
+            letter-spacing: 0.15em;
+            z-index: 10001;
+            opacity: 0;
+            transition: opacity 0.2s;
+            white-space: nowrap;
+        }
+
+        #presentation.active:hover #slide-info { opacity: 1; }
+
+        /* ?"??"? Dica de sada ?"??"? */
+        #esc-hint {
+            position: fixed;
+            top: 12px;
+            right: 18px;
+            font-size: 0.64rem;
+            color: rgba(255, 255, 255, 0.18);
+            letter-spacing: 0.1em;
+            z-index: 10001;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        #presentation.active:hover #esc-hint { opacity: 1; }
+
+        /* ?.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.?
+           SLIDES TEMTICOS ??" SHARKS
+        ?.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.??.? */
+
+        .shark-slide {
+            background: radial-gradient(ellipse 140% 75% at 50% 110%, #0b2e44 0%, #020c14 58%);
+            overflow: hidden;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        /* ?"??"? Barbatanas de fundo nadando ?"??"? */
+        .fins-bg {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .fin-svg {
+            position: absolute;
+            color: #1bb8d8;
+            opacity: 0;
+            animation: shark-swim linear infinite;
+            animation-play-state: paused;
+        }
+
+        .slide.active .fin-svg {
+            animation-play-state: running;
+        }
+
+        @keyframes shark-swim {
+            0%   { transform: translateX(-200px); opacity: 0; }
+            8%   { opacity: 0.15; }
+            92%  { opacity: 0.15; }
+            100% { transform: translateX(calc(100vw + 300px)); opacity: 0; }
+        }
+
+        /* ?"??"? Slide 3 ??" Card Shark ?"??"? */
+        #slide-3 .shark-card {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 52px;
+            max-width: 980px;
+            width: 88%;
+        }
+
+        .shark-card-photo-col {
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 14px;
+            animation: fadeSlideUp 0.7s 0.1s ease both;
+            animation-play-state: paused;
+        }
+        .slide.active .shark-card-photo-col { animation-play-state: running; }
+
+        .shark-badge {
+            font-family: 'Bebas Neue', Impact, 'Arial Narrow', sans-serif;
+            font-size: 0.78rem;
+            letter-spacing: 0.5em;
+            color: #1bb8d8;
+            border: 1px solid rgba(27,184,216,0.38);
+            padding: 5px 18px;
+            background: rgba(27,184,216,0.07);
+            border-radius: 2px;
+        }
+
+        .shark-photo-ring {
+            position: relative;
+            width: 230px;
+            height: 230px;
+        }
+
+        .shark-photo-ring img {
+            width: 230px;
+            height: 230px;
+            border-radius: 50%;
+            object-fit: cover;
+            object-position: center top;
+            border: 4px solid #1bb8d8;
+            box-shadow:
+                0 0 0 9px rgba(27,184,216,0.1),
+                0 0 65px rgba(27,184,216,0.4);
+            display: block;
+        }
+
+        .orbit-ring {
+            position: absolute;
+            inset: -28px;
+            animation: orbit-spin 5s linear infinite;
+            animation-play-state: paused;
+        }
+        .slide.active .orbit-ring { animation-play-state: running; }
+
+        .orbit-fin-svg {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 28px;
+            fill: #1bb8d8;
+            filter: drop-shadow(0 0 9px rgba(27,184,216,0.95));
+        }
+
+        @keyframes orbit-spin {
+            from { transform: rotate(0deg); }
+            to   { transform: rotate(360deg); }
+        }
+
+        .shark-card-text-col {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            animation: fadeSlideUp 0.7s 0.25s ease both;
+            animation-play-state: paused;
+        }
+        .slide.active .shark-card-text-col { animation-play-state: running; }
+
+        .shark-card-number {
+            font-family: 'Bebas Neue', Impact, 'Arial Narrow', sans-serif;
+            font-size: 0.75rem;
+            letter-spacing: 0.5em;
+            color: rgba(27,184,216,0.65);
+        }
+
+        .shark-card-name {
+            font-family: 'Bebas Neue', Impact, 'Arial Narrow', sans-serif;
+            font-size: clamp(2.2rem, 5vw, 4.2rem);
+            color: #fff;
+            line-height: 0.88;
+            letter-spacing: 0.05em;
+            text-shadow: 0 4px 22px rgba(0,0,0,0.6), 0 0 60px rgba(27,184,216,0.15);
+            margin: 0;
+        }
+
+        .shark-card-role {
+            font-size: 0.78rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: #1bb8d8;
+            border-left: 3px solid #1bb8d8;
+            padding-left: 12px;
+            line-height: 1.85;
+        }
+
+        .shark-card-divider {
+            width: 52px;
+            height: 2px;
+            background: linear-gradient(90deg, #1bb8d8, transparent);
+        }
+
+        .shark-card-bio {
+            font-size: 0.87rem;
+            color: rgba(255,255,255,0.65);
+            line-height: 1.75;
+        }
+
+        .shark-card-bio strong {
+            color: rgba(255,255,255,0.92);
+            font-weight: 600;
+        }
+
+        .shark-card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .shark-tag {
+            font-size: 0.65rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: #7dcce8;
+            border: 1px solid rgba(27,184,216,0.25);
+            padding: 4px 11px;
+            border-radius: 2px;
+            background: rgba(27,184,216,0.05);
+        }
+
+        @keyframes fadeSlideUp {
+            from { opacity: 0; transform: translateY(32px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ?.??.??.??.??.??.??.??.??.??.??.??.??.??.? TELA INICIAL ?.??.??.??.??.??.??.??.??.??.??.??.??.??.? -->
+<div id="landing">
+    <img class="shark-logo" src="logo shark tank.png" alt="Shark Tank">
+
+    <div class="course-badge">
+        <img src="logo unasp.png" alt="Unasp-EC">
+        <span>Unasp-EC &nbsp;&#9830;&nbsp; Sistemas de Informa&ccedil;&atilde;o</span>
+    </div>
+
+    <button id="btn-start" onclick="startPresentation()">&#9654;&nbsp; Iniciar Apresenta&ccedil;&atilde;o</button>
+
+    <p class="hint-text">Use &larr; &rarr; para navegar &nbsp;&middot;&nbsp; F12 para sair da apresenta&ccedil;&atilde;o</p>
+</div>
+
+<!-- ?.??.??.??.??.??.??.??.??.??.??.??.??.??.? APRESENTA???fO ?.??.??.??.??.??.??.??.??.??.??.??.??.??.? -->
+<div id="presentation">
+    <div id="slides-container">
+        <div class="slide" id="slide-6" style="background:#000;">
+            <img class="slide-img" src="banner 6.png" alt="Apresenta&ccedil;&atilde;o dos Grupos de Alunos">
+        </div>
+
+        <!-- ?"??"??"? SLIDE 7 ??" GRUPO FANAL AI ?"??"??"? -->
+        <div class="slide" id="slide-7" style="background:#000;">
+            <img class="slide-img" src="banner 7.png" alt="Grupo Fanal AI">
+        </div>
+
+        <!-- ?"??"??"? SLIDE 8 ??" ARTHUR HENRIQUE ??" FANAL AI ?"??"??"? -->
+        <div class="slide" id="slide-8" style="background:#000; display:flex; align-items:center; justify-content:center;">
+            <div style="position:relative; width:min(100vw, 177.78vh); height:min(100vh, 56.25vw); flex-shrink:0;">
+
+                <!-- Banner de fundo -->
+                <img style="position:absolute;inset:0;width:100%;height:100%;object-fit:fill;display:block;" src="banner 8.png" alt="Arthur Henrique">
+
+                <!-- ?? FOTO com anel neon ?? -->
+                <!-- Anel externo (glow) -->
+                <div style="position:absolute;left:17%;top:13%;width:26%;aspect-ratio:1/1;border-radius:50%;box-shadow:0 0 0 3px #1bb8d8, 0 0 30px 8px rgba(27,184,216,0.5), 0 0 70px 16px rgba(27,184,216,0.18);pointer-events:none;"></div>
+                <!-- Foto -->
+                <img src="Arthur Henrique.jpeg" alt="Arthur Henrique"
+                     style="position:absolute;left:17%;top:13%;width:26%;aspect-ratio:1/1;border-radius:50%;object-fit:cover;object-position:center top;pointer-events:none;">
+
+                <!-- ?? CONTEUDO DIREITO ?? -->
+                <div style="position:absolute;left:46%;top:8%;width:50%;height:84%;display:flex;flex-direction:column;justify-content:space-between;pointer-events:none;">
+
+                    <!-- Badge projeto -->
+                    <div style="display:flex;align-items:center;gap:2%;">
+                        <div style="display:inline-flex;align-items:center;gap:7px;padding:0.55% 2%;background:rgba(27,184,216,0.1);border:1px solid rgba(27,184,216,0.65);border-radius:3px;box-shadow:0 0 14px rgba(27,184,216,0.25);">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="#1bb8d8"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                            <span style="font-family:'Bebas Neue',Impact,sans-serif;font-size:min(1.6vw,2.84vh);letter-spacing:0.35em;color:#1bb8d8;text-shadow:0 0 12px rgba(27,184,216,0.8);">FANAL AI</span>
+                        </div>
+                        <div style="height:1px;flex:1;background:linear-gradient(90deg,rgba(27,184,216,0.45),transparent);"></div>
+                        <span style="font-size:min(0.75vw,1.33vh);letter-spacing:0.28em;color:rgba(255,255,255,0.28);">GRUPO 01</span>
+                    </div>
+
+                    <!-- Nome -->
+                    <div>
+                        <div style="font-family:'Bebas Neue',Impact,'Arial Narrow',sans-serif;font-size:min(10.5vw,18.67vh);color:#fff;line-height:0.85;letter-spacing:0.03em;text-shadow:0 4px 32px rgba(0,0,0,0.95);">ARTHUR</div>
+                        <div style="font-family:'Bebas Neue',Impact,'Arial Narrow',sans-serif;font-size:min(10.5vw,18.67vh);color:#1bb8d8;line-height:0.85;letter-spacing:0.03em;text-shadow:0 0 55px rgba(27,184,216,0.75),0 4px 32px rgba(0,0,0,0.9);">HENRIQUE</div>
+                    </div>
+
+                    <!-- Cargo -->
+                    <div style="display:flex;align-items:stretch;gap:1%;">
+                        <div style="width:3px;background:linear-gradient(180deg,#1bb8d8,rgba(27,184,216,0.1));border-radius:2px;flex-shrink:0;"></div>
+                        <div style="font-size:min(1.18vw,2.1vh);letter-spacing:0.17em;text-transform:uppercase;color:#a8dff0;line-height:1.85;">
+                            Desenvolvedor &amp; Analista<br>
+                            <span style="color:rgba(255,255,255,0.45);font-size:0.87em;">Sistemas de Informacao &middot; Unasp-EC</span>
+                        </div>
+                    </div>
+
+                    <!-- Divisor -->
+                    <div style="width:20%;height:2px;background:linear-gradient(90deg,#1bb8d8,transparent);"></div>
+
+                    <!-- Bio -->
+                    <div style="font-size:min(1.08vw,1.92vh);color:rgba(255,255,255,0.75);line-height:1.88;">
+                        Sou o Arthur, movido pela logica e pelo desenvolvimento de solucoes. Encontro o meu proposito na tecnologia e no prazer de fazer conceitos digitais se tornarem pratica, combinando um perfil analitico com uma mente focada em criar e materializar ideias.
+                    </div>
+
+                    <!-- Tags -->
+                    <div style="display:flex;flex-wrap:wrap;gap:1.6% 1.4%;">
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                            Logica &amp; Analise
+                        </div>
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                            Tecnologia
+                        </div>
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                            Desenvolvimento
+                        </div>
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+                            Foco em Solucoes
+                        </div>
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                            Materializacao de Ideias
+                        </div>
+                    </div>
+
+                </div><!-- /conteudo -->
+
+            </div>
+        </div>
+
+        <!-- --- SLIDE 9  ALISSON LUCAS --- -->
+        <div class="slide" id="slide-9" style="background:#000;display:flex;align-items:center;justify-content:center;">
+            <div style="position:relative;width:min(100vw,177.78vh);height:min(100vh,56.25vw);flex-shrink:0;">
+                <img style="position:absolute;inset:0;width:100%;height:100%;object-fit:fill;display:block;" src="banner 8.png" alt="">
+                <div style="position:absolute;left:17%;top:13%;width:26%;aspect-ratio:1/1;border-radius:50%;box-shadow:0 0 0 3px #1bb8d8,0 0 30px 8px rgba(27,184,216,0.5),0 0 70px 16px rgba(27,184,216,0.18);pointer-events:none;"></div>
+                <img src="Alisson Lucas Rodrigues Ferreira.jpeg" alt="Alisson Lucas" style="position:absolute;left:17%;top:13%;width:26%;aspect-ratio:1/1;border-radius:50%;object-fit:cover;object-position:center 20%;pointer-events:none;">
+                <div style="position:absolute;left:46%;top:8%;width:50%;height:84%;display:flex;flex-direction:column;justify-content:space-between;pointer-events:none;">
+                    <div style="display:flex;align-items:center;gap:2%;"><div style="display:inline-flex;align-items:center;gap:7px;padding:0.55% 2%;background:rgba(27,184,216,0.1);border:1px solid rgba(27,184,216,0.65);border-radius:3px;box-shadow:0 0 14px rgba(27,184,216,0.25);"><svg width="12" height="12" viewBox="0 0 24 24" fill="#1bb8d8"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><span style="font-family:'Bebas Neue',Impact,sans-serif;font-size:min(1.6vw,2.84vh);letter-spacing:0.35em;color:#1bb8d8;text-shadow:0 0 12px rgba(27,184,216,0.8);">FANAL AI</span></div><div style="height:1px;flex:1;background:linear-gradient(90deg,rgba(27,184,216,0.45),transparent);"></div><span style="font-size:min(0.75vw,1.33vh);letter-spacing:0.28em;color:rgba(255,255,255,0.28);">GRUPO 01</span></div>
+                    <div><div style="font-family:'Bebas Neue',Impact,'Arial Narrow',sans-serif;font-size:min(10.5vw,18.67vh);color:#fff;line-height:0.85;letter-spacing:0.03em;text-shadow:0 4px 32px rgba(0,0,0,0.95);">ALISSON</div><div style="font-family:'Bebas Neue',Impact,'Arial Narrow',sans-serif;font-size:min(10.5vw,18.67vh);color:#1bb8d8;line-height:0.85;letter-spacing:0.03em;text-shadow:0 0 55px rgba(27,184,216,0.75),0 4px 32px rgba(0,0,0,0.9);">LUCAS</div></div>
+                    <div style="display:flex;align-items:stretch;gap:1%;"><div style="width:3px;background:linear-gradient(180deg,#1bb8d8,rgba(27,184,216,0.1));border-radius:2px;flex-shrink:0;"></div><div style="font-size:min(1.18vw,2.1vh);letter-spacing:0.17em;text-transform:uppercase;color:#a8dff0;line-height:1.85;">Sistemas de Informa&ccedil;&atilde;o &middot; 23 anos<br><span style="color:rgba(255,255,255,0.45);font-size:0.87em;">Sistemas de Informa&ccedil;&atilde;o &middot; Unasp-EC</span></div></div>
+                    <div style="width:20%;height:2px;background:linear-gradient(90deg,#1bb8d8,transparent);"></div>
+                    <div style="font-size:min(1.08vw,1.92vh);color:rgba(255,255,255,0.75);line-height:1.88;">Algu&eacute;m <strong style="color:rgba(255,255,255,0.92);">determinado</strong>, que gosta de tecnologia, est&aacute; sempre aprendendo coisas novas e busca evoluir um pouco a cada dia. Movido pela vontade de <strong style="color:rgba(255,255,255,0.92);">crescer, aprender e construir um futuro melhor</strong>. Apaixonado por tecnologia e evolu&ccedil;&atilde;o constante.</div>
+                    <div style="display:flex;flex-wrap:wrap;gap:1.6% 1.4%;">
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>Tecnologia</div>
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>Aprendizado</div>
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>Evolu&ccedil;&atilde;o</div>
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Determina&ccedil;&atilde;o</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- --- SLIDE 11  CAU --- -->
+        <div class="slide" id="slide-11" style="background:#000;display:flex;align-items:center;justify-content:center;">
+            <div style="position:relative;width:min(100vw,177.78vh);height:min(100vh,56.25vw);flex-shrink:0;">
+                <img style="position:absolute;inset:0;width:100%;height:100%;object-fit:fill;display:block;" src="banner 8.png" alt="">
+                <div style="position:absolute;left:17%;top:13%;width:26%;aspect-ratio:1/1;border-radius:50%;box-shadow:0 0 0 3px #1bb8d8,0 0 30px 8px rgba(27,184,216,0.5),0 0 70px 16px rgba(27,184,216,0.18);pointer-events:none;"></div>
+                <img src="cauã.jpeg" alt="Cauã" style="position:absolute;left:17%;top:13%;width:26%;aspect-ratio:1/1;border-radius:50%;object-fit:cover;object-position:center top;pointer-events:none;">
+                <div style="position:absolute;left:46%;top:8%;width:50%;height:84%;display:flex;flex-direction:column;justify-content:space-between;pointer-events:none;">
+                    <div style="display:flex;align-items:center;gap:2%;"><div style="display:inline-flex;align-items:center;gap:7px;padding:0.55% 2%;background:rgba(27,184,216,0.1);border:1px solid rgba(27,184,216,0.65);border-radius:3px;box-shadow:0 0 14px rgba(27,184,216,0.25);"><svg width="12" height="12" viewBox="0 0 24 24" fill="#1bb8d8"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><span style="font-family:'Bebas Neue',Impact,sans-serif;font-size:min(1.6vw,2.84vh);letter-spacing:0.35em;color:#1bb8d8;text-shadow:0 0 12px rgba(27,184,216,0.8);">FANAL AI</span></div><div style="height:1px;flex:1;background:linear-gradient(90deg,rgba(27,184,216,0.45),transparent);"></div><span style="font-size:min(0.75vw,1.33vh);letter-spacing:0.28em;color:rgba(255,255,255,0.28);">GRUPO 01</span></div>
+                    <div><div style="font-family:'Bebas Neue',Impact,'Arial Narrow',sans-serif;font-size:min(10.5vw,18.67vh);color:#fff;line-height:0.85;letter-spacing:0.03em;text-shadow:0 4px 32px rgba(0,0,0,0.95);">CAU&#195;</div><div style="font-family:'Bebas Neue',Impact,'Arial Narrow',sans-serif;font-size:min(10.5vw,18.67vh);color:#1bb8d8;line-height:0.85;letter-spacing:0.03em;text-shadow:0 0 55px rgba(27,184,216,0.75),0 4px 32px rgba(0,0,0,0.9);">HENRIQUE</div></div>
+                    <div style="display:flex;align-items:stretch;gap:1%;"><div style="width:3px;background:linear-gradient(180deg,#1bb8d8,rgba(27,184,216,0.1));border-radius:2px;flex-shrink:0;"></div><div style="font-size:min(1.18vw,2.1vh);letter-spacing:0.17em;text-transform:uppercase;color:#a8dff0;line-height:1.85;">Sistemas de Informa&ccedil;&atilde;o &middot; 18 anos<br><span style="color:rgba(255,255,255,0.45);font-size:0.87em;">Sistemas de Informa&ccedil;&atilde;o &middot; Unasp-EC</span></div></div>
+                    <div style="width:20%;height:2px;background:linear-gradient(90deg,#1bb8d8,transparent);"></div>
+                    <div style="font-size:min(1.08vw,1.92vh);color:rgba(255,255,255,0.75);line-height:1.88;">Sempre gostei muito de tecnologia e depois que comecei a jogar <strong style="color:rgba(255,255,255,0.92);">videogame</strong> me apaixonei ainda mais por esse mundo. Meu sonho &eacute; trabalhar em grandes empresas como <strong style="color:rgba(255,255,255,0.92);">IBM, Apple ou Microsoft</strong> &mdash; empresas que admiro pelos produtos incr&iacute;veis que criam.</div>
+                    <div style="display:flex;flex-wrap:wrap;gap:1.6% 1.4%;">
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>Big Tech</div>
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>Tecnologia</div>
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>Games</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- --- SLIDE 12  DAVI --- -->
+        <div class="slide" id="slide-12" style="background:#000;display:flex;align-items:center;justify-content:center;">
+            <div style="position:relative;width:min(100vw,177.78vh);height:min(100vh,56.25vw);flex-shrink:0;">
+                <img style="position:absolute;inset:0;width:100%;height:100%;object-fit:fill;display:block;" src="banner 8.png" alt="">
+                <div style="position:absolute;left:17%;top:13%;width:26%;aspect-ratio:1/1;border-radius:50%;box-shadow:0 0 0 3px #1bb8d8,0 0 30px 8px rgba(27,184,216,0.5),0 0 70px 16px rgba(27,184,216,0.18);pointer-events:none;"></div>
+                <img src="Davi.jpeg" alt="Davi" style="position:absolute;left:17%;top:13%;width:26%;aspect-ratio:1/1;border-radius:50%;object-fit:cover;object-position:center top;pointer-events:none;">
+                <div style="position:absolute;left:46%;top:8%;width:50%;height:84%;display:flex;flex-direction:column;justify-content:space-between;pointer-events:none;">
+                    <div style="display:flex;align-items:center;gap:2%;"><div style="display:inline-flex;align-items:center;gap:7px;padding:0.55% 2%;background:rgba(27,184,216,0.1);border:1px solid rgba(27,184,216,0.65);border-radius:3px;box-shadow:0 0 14px rgba(27,184,216,0.25);"><svg width="12" height="12" viewBox="0 0 24 24" fill="#1bb8d8"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><span style="font-family:'Bebas Neue',Impact,sans-serif;font-size:min(1.6vw,2.84vh);letter-spacing:0.35em;color:#1bb8d8;text-shadow:0 0 12px rgba(27,184,216,0.8);">FANAL AI</span></div><div style="height:1px;flex:1;background:linear-gradient(90deg,rgba(27,184,216,0.45),transparent);"></div><span style="font-size:min(0.75vw,1.33vh);letter-spacing:0.28em;color:rgba(255,255,255,0.28);">GRUPO 01</span></div>
+                    <div><div style="font-family:'Bebas Neue',Impact,'Arial Narrow',sans-serif;font-size:min(10.5vw,18.67vh);color:#fff;line-height:0.85;letter-spacing:0.03em;text-shadow:0 4px 32px rgba(0,0,0,0.95);">DAVI</div><div style="font-family:'Bebas Neue',Impact,'Arial Narrow',sans-serif;font-size:min(10.5vw,18.67vh);color:#1bb8d8;line-height:0.85;letter-spacing:0.03em;text-shadow:0 0 55px rgba(27,184,216,0.75),0 4px 32px rgba(0,0,0,0.9);">SOBRENOME</div></div>
+                    <div style="display:flex;align-items:stretch;gap:1%;"><div style="width:3px;background:linear-gradient(180deg,#1bb8d8,rgba(27,184,216,0.1));border-radius:2px;flex-shrink:0;"></div><div style="font-size:min(1.18vw,2.1vh);letter-spacing:0.17em;text-transform:uppercase;color:#a8dff0;line-height:1.85;">Tecnologia da Informa&ccedil;&atilde;o &middot; 19 anos<br><span style="color:rgba(255,255,255,0.45);font-size:0.87em;">Sistemas de Informa&ccedil;&atilde;o &middot; Unasp-EC</span></div></div>
+                    <div style="width:20%;height:2px;background:linear-gradient(90deg,#1bb8d8,transparent);"></div>
+                    <div style="font-size:min(1.08vw,1.92vh);color:rgba(255,255,255,0.75);line-height:1.88;">Tenho grande interesse em <strong style="color:rgba(255,255,255,0.92);">sistemas de informa&ccedil;&atilde;o</strong> e desenvolvimento tecnol&oacute;gico. Gosto de aprender continuamente, explorar novas ferramentas e compreender como a tecnologia resolve problemas. Busco evoluir minhas habilidades e construir uma trajet&oacute;ria s&oacute;lida, sempre focado em <strong style="color:rgba(255,255,255,0.92);">inova&ccedil;&atilde;o</strong> e no uso inteligente da tecnologia.</div>
+                    <div style="display:flex;flex-wrap:wrap;gap:1.6% 1.4%;">
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>Sistemas de TI</div>
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>Inova&ccedil;&atilde;o</div>
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Tecnologia</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- --- SLIDE 13  DAVID ESTEVO --- -->
+        <div class="slide" id="slide-13" style="background:#000;display:flex;align-items:center;justify-content:center;">
+            <div style="position:relative;width:min(100vw,177.78vh);height:min(100vh,56.25vw);flex-shrink:0;">
+                <img style="position:absolute;inset:0;width:100%;height:100%;object-fit:fill;display:block;" src="banner 8.png" alt="">
+                <div style="position:absolute;left:17%;top:13%;width:26%;aspect-ratio:1/1;border-radius:50%;box-shadow:0 0 0 3px #1bb8d8,0 0 30px 8px rgba(27,184,216,0.5),0 0 70px 16px rgba(27,184,216,0.18);pointer-events:none;"></div>
+                <img src="David Estev&#227;o.jpeg" alt="David Estev&#227;o" style="position:absolute;left:17%;top:13%;width:26%;aspect-ratio:1/1;border-radius:50%;object-fit:cover;object-position:center top;pointer-events:none;">
+                <div style="position:absolute;left:46%;top:8%;width:50%;height:84%;display:flex;flex-direction:column;justify-content:space-between;pointer-events:none;">
+                    <div style="display:flex;align-items:center;gap:2%;"><div style="display:inline-flex;align-items:center;gap:7px;padding:0.55% 2%;background:rgba(27,184,216,0.1);border:1px solid rgba(27,184,216,0.65);border-radius:3px;box-shadow:0 0 14px rgba(27,184,216,0.25);"><svg width="12" height="12" viewBox="0 0 24 24" fill="#1bb8d8"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><span style="font-family:'Bebas Neue',Impact,sans-serif;font-size:min(1.6vw,2.84vh);letter-spacing:0.35em;color:#1bb8d8;text-shadow:0 0 12px rgba(27,184,216,0.8);">FANAL AI</span></div><div style="height:1px;flex:1;background:linear-gradient(90deg,rgba(27,184,216,0.45),transparent);"></div><span style="font-size:min(0.75vw,1.33vh);letter-spacing:0.28em;color:rgba(255,255,255,0.28);">GRUPO 01</span></div>
+                    <div><div style="font-family:'Bebas Neue',Impact,'Arial Narrow',sans-serif;font-size:min(10.5vw,18.67vh);color:#fff;line-height:0.85;letter-spacing:0.03em;text-shadow:0 4px 32px rgba(0,0,0,0.95);">DAVID</div><div style="font-family:'Bebas Neue',Impact,'Arial Narrow',sans-serif;font-size:min(10.5vw,18.67vh);color:#1bb8d8;line-height:0.85;letter-spacing:0.03em;text-shadow:0 0 55px rgba(27,184,216,0.75),0 4px 32px rgba(0,0,0,0.9);">ESTEV&#195;O</div></div>
+                    <div style="display:flex;align-items:stretch;gap:1%;"><div style="width:3px;background:linear-gradient(180deg,#1bb8d8,rgba(27,184,216,0.1));border-radius:2px;flex-shrink:0;"></div><div style="font-size:min(1.18vw,2.1vh);letter-spacing:0.17em;text-transform:uppercase;color:#a8dff0;line-height:1.85;">Transforma&ccedil;&atilde;o Digital &middot; Sistemas de Informa&ccedil;&atilde;o<br><span style="color:rgba(255,255,255,0.45);font-size:0.87em;">Sistemas de Informa&ccedil;&atilde;o &middot; Unasp-EC</span></div></div>
+                    <div style="width:20%;height:2px;background:linear-gradient(90deg,#1bb8d8,transparent);"></div>
+                    <div style="font-size:min(1.08vw,1.92vh);color:rgba(255,255,255,0.75);line-height:1.88;">Focado em ampliar conhecimentos em <strong style="color:rgba(255,255,255,0.92);">programa&ccedil;&atilde;o, an&aacute;lise de dados e Cloud Computing</strong>. Busco desenvolver habilidades t&eacute;cnicas e comportamentais, sempre com dedica&ccedil;&atilde;o e curiosidade. Em busca da primeira oportunidade na &aacute;rea para aplicar conhecimentos e <strong style="color:rgba(255,255,255,0.92);">contribuir para o sucesso de projetos e equipes</strong>.</div>
+                    <div style="display:flex;flex-wrap:wrap;gap:1.6% 1.4%;">
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>Programa&ccedil;&atilde;o</div>
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>Cloud Computing</div>
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="9" height="9"/><rect x="13" y="2" width="9" height="9"/><rect x="13" y="13" width="9" height="9"/><rect x="2" y="13" width="9" height="9"/></svg>An&aacute;lise de Dados</div>
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Aprendizado Cont&iacute;nuo</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- --- SLIDE 14  GUILHERME LUZ --- -->
+        <div class="slide" id="slide-15" style="background:#000;display:flex;align-items:center;justify-content:center;">
+            <div style="position:relative;width:min(100vw,177.78vh);height:min(100vh,56.25vw);flex-shrink:0;">
+                <img style="position:absolute;inset:0;width:100%;height:100%;object-fit:fill;display:block;" src="banner 8.png" alt="">
+                <div style="position:absolute;left:17%;top:13%;width:26%;aspect-ratio:1/1;border-radius:50%;box-shadow:0 0 0 3px #1bb8d8,0 0 30px 8px rgba(27,184,216,0.5),0 0 70px 16px rgba(27,184,216,0.18);pointer-events:none;"></div>
+                <img src="Henrique Macedo .jpeg" alt="Henrique Macedo" style="position:absolute;left:17%;top:13%;width:26%;aspect-ratio:1/1;border-radius:50%;object-fit:cover;object-position:center top;pointer-events:none;">
+                <div style="position:absolute;left:46%;top:8%;width:50%;height:84%;display:flex;flex-direction:column;justify-content:space-between;pointer-events:none;">
+                    <div style="display:flex;align-items:center;gap:2%;"><div style="display:inline-flex;align-items:center;gap:7px;padding:0.55% 2%;background:rgba(27,184,216,0.1);border:1px solid rgba(27,184,216,0.65);border-radius:3px;box-shadow:0 0 14px rgba(27,184,216,0.25);"><svg width="12" height="12" viewBox="0 0 24 24" fill="#1bb8d8"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><span style="font-family:'Bebas Neue',Impact,sans-serif;font-size:min(1.6vw,2.84vh);letter-spacing:0.35em;color:#1bb8d8;text-shadow:0 0 12px rgba(27,184,216,0.8);">FANAL AI</span></div><div style="height:1px;flex:1;background:linear-gradient(90deg,rgba(27,184,216,0.45),transparent);"></div><span style="font-size:min(0.75vw,1.33vh);letter-spacing:0.28em;color:rgba(255,255,255,0.28);">GRUPO 01</span></div>
+                    <div><div style="font-family:'Bebas Neue',Impact,'Arial Narrow',sans-serif;font-size:min(10.5vw,18.67vh);color:#fff;line-height:0.85;letter-spacing:0.03em;text-shadow:0 4px 32px rgba(0,0,0,0.95);">HENRIQUE</div><div style="font-family:'Bebas Neue',Impact,'Arial Narrow',sans-serif;font-size:min(10.5vw,18.67vh);color:#1bb8d8;line-height:0.85;letter-spacing:0.03em;text-shadow:0 0 55px rgba(27,184,216,0.75),0 4px 32px rgba(0,0,0,0.9);">MACEDO</div></div>
+                    <div style="display:flex;align-items:stretch;gap:1%;"><div style="width:3px;background:linear-gradient(180deg,#1bb8d8,rgba(27,184,216,0.1));border-radius:2px;flex-shrink:0;"></div><div style="font-size:min(1.18vw,2.1vh);letter-spacing:0.17em;text-transform:uppercase;color:#a8dff0;line-height:1.85;">Sistemas de Informa&ccedil;&atilde;o<br><span style="color:rgba(255,255,255,0.45);font-size:0.87em;">Sistemas de Informa&ccedil;&atilde;o &middot; Unasp-EC</span></div></div>
+                    <div style="width:20%;height:2px;background:linear-gradient(90deg,#1bb8d8,transparent);"></div>
+                    <div style="font-size:min(1.08vw,1.92vh);color:rgba(255,255,255,0.75);line-height:1.88;">Dedicado, respons&aacute;vel e comprometido com meus objetivos. Tenho facilidade para <strong style="color:rgba(255,255,255,0.92);">aprender novas habilidades</strong>, trabalhar em equipe e buscar solu&ccedil;&otilde;es para os desafios do dia a dia. Sempre em busca de <strong style="color:rgba(255,255,255,0.92);">crescimento pessoal e profissional</strong>.</div>
+                    <div style="display:flex;flex-wrap:wrap;gap:1.6% 1.4%;">
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>Sistemas de TI</div>
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Trabalho em Equipe</div>
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Crescimento</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- --- SLIDE 16  ISAAC YUJI --- -->
+        <div class="slide" id="slide-26" style="background:#000;display:flex;align-items:center;justify-content:center;">
+            <div style="position:relative;width:min(100vw,177.78vh);height:min(100vh,56.25vw);flex-shrink:0;">
+                <img style="position:absolute;inset:0;width:100%;height:100%;object-fit:fill;display:block;" src="banner 8.png" alt="">
+                <div style="position:absolute;left:17%;top:13%;width:26%;aspect-ratio:1/1;border-radius:50%;box-shadow:0 0 0 3px #1bb8d8,0 0 30px 8px rgba(27,184,216,0.5),0 0 70px 16px rgba(27,184,216,0.18);pointer-events:none;"></div>
+                <img src="Samuell alves dos santos.jpeg" alt="Samuell Alves" style="position:absolute;left:17%;top:13%;width:26%;aspect-ratio:1/1;border-radius:50%;object-fit:cover;object-position:center 40%;pointer-events:none;">
+                <div style="position:absolute;left:46%;top:8%;width:50%;height:84%;display:flex;flex-direction:column;justify-content:space-between;pointer-events:none;">
+                    <div style="display:flex;align-items:center;gap:2%;"><div style="display:inline-flex;align-items:center;gap:7px;padding:0.55% 2%;background:rgba(27,184,216,0.1);border:1px solid rgba(27,184,216,0.65);border-radius:3px;box-shadow:0 0 14px rgba(27,184,216,0.25);"><svg width="12" height="12" viewBox="0 0 24 24" fill="#1bb8d8"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><span style="font-family:'Bebas Neue',Impact,sans-serif;font-size:min(1.6vw,2.84vh);letter-spacing:0.35em;color:#1bb8d8;text-shadow:0 0 12px rgba(27,184,216,0.8);">FANAL AI</span></div><div style="height:1px;flex:1;background:linear-gradient(90deg,rgba(27,184,216,0.45),transparent);"></div><span style="font-size:min(0.75vw,1.33vh);letter-spacing:0.28em;color:rgba(255,255,255,0.28);">GRUPO 01</span></div>
+                    <div><div style="font-family:'Bebas Neue',Impact,'Arial Narrow',sans-serif;font-size:min(10.5vw,18.67vh);color:#fff;line-height:0.85;letter-spacing:0.03em;text-shadow:0 4px 32px rgba(0,0,0,0.95);">SAMUELL</div><div style="font-family:'Bebas Neue',Impact,'Arial Narrow',sans-serif;font-size:min(10.5vw,18.67vh);color:#1bb8d8;line-height:0.85;letter-spacing:0.03em;text-shadow:0 0 55px rgba(27,184,216,0.75),0 4px 32px rgba(0,0,0,0.9);">ALVES</div></div>
+                    <div style="display:flex;align-items:stretch;gap:1%;"><div style="width:3px;background:linear-gradient(180deg,#1bb8d8,rgba(27,184,216,0.1));border-radius:2px;flex-shrink:0;"></div><div style="font-size:min(1.18vw,2.1vh);letter-spacing:0.17em;text-transform:uppercase;color:#a8dff0;line-height:1.85;">Sistemas de Informa&ccedil;&atilde;o &middot; 18 anos<br><span style="color:rgba(255,255,255,0.45);font-size:0.87em;">Sistemas de Informa&ccedil;&atilde;o &middot; Unasp-EC</span></div></div>
+                    <div style="width:20%;height:2px;background:linear-gradient(90deg,#1bb8d8,transparent);"></div>
+                    <div style="font-size:min(1.08vw,1.92vh);color:rgba(255,255,255,0.75);line-height:1.88;">Estudante de Sistemas de Informa&ccedil;&atilde;o com um sonho simples e poderoso: <strong style="color:rgba(255,255,255,0.92);">ajudar a fam&iacute;lia</strong> trabalhando com <strong style="color:rgba(255,255,255,0.92);">tecnologia</strong>.</div>
+                    <div style="display:flex;flex-wrap:wrap;gap:1.6% 1.4%;">
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>Tecnologia</div>
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>Fam&iacute;lia</div>
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Prop&oacute;sito</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- --- SLIDE 27  VITOR HUGO --- -->
+        <div class="slide" id="slide-grupo2" style="background:#000;">
+            <img class="slide-img" src="grupo 2.png" alt="Grupo 2">
+        </div>
+
+        <!-- --- GRUPO 2  JHONATHAN DELGADO --- -->
+        <div class="slide" id="slide-17" style="background:#000;display:flex;align-items:center;justify-content:center;">
+            <div style="position:relative;width:min(100vw,177.78vh);height:min(100vh,56.25vw);flex-shrink:0;">
+                <img style="position:absolute;inset:0;width:100%;height:100%;object-fit:fill;display:block;" src="banner 8.png" alt="">
+                <div style="position:absolute;left:17%;top:13%;width:26%;aspect-ratio:1/1;border-radius:50%;box-shadow:0 0 0 3px #1bb8d8,0 0 30px 8px rgba(27,184,216,0.5),0 0 70px 16px rgba(27,184,216,0.18);pointer-events:none;"></div>
+                <img src="Jade Santos .jpeg" alt="Jade Santos" style="position:absolute;left:17%;top:13%;width:26%;aspect-ratio:1/1;border-radius:50%;object-fit:cover;object-position:center top;pointer-events:none;">
+                <div style="position:absolute;left:46%;top:8%;width:50%;height:84%;display:flex;flex-direction:column;justify-content:space-between;pointer-events:none;">
+                    <div style="display:flex;align-items:center;gap:2%;"><div style="display:inline-flex;align-items:center;gap:7px;padding:0.55% 2%;background:rgba(27,184,216,0.1);border:1px solid rgba(27,184,216,0.65);border-radius:3px;box-shadow:0 0 14px rgba(27,184,216,0.25);"><svg width="12" height="12" viewBox="0 0 24 24" fill="#1bb8d8"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><span style="font-family:'Bebas Neue',Impact,sans-serif;font-size:min(1.6vw,2.84vh);letter-spacing:0.35em;color:#1bb8d8;text-shadow:0 0 12px rgba(27,184,216,0.8);">FREEZE</span></div><div style="height:1px;flex:1;background:linear-gradient(90deg,rgba(27,184,216,0.45),transparent);"></div><span style="font-size:min(0.75vw,1.33vh);letter-spacing:0.28em;color:rgba(255,255,255,0.28);">GRUPO 03</span></div>
+                    <div><div style="font-family:'Bebas Neue',Impact,'Arial Narrow',sans-serif;font-size:min(10.5vw,18.67vh);color:#fff;line-height:0.85;letter-spacing:0.03em;text-shadow:0 4px 32px rgba(0,0,0,0.95);">JADE</div><div style="font-family:'Bebas Neue',Impact,'Arial Narrow',sans-serif;font-size:min(10.5vw,18.67vh);color:#1bb8d8;line-height:0.85;letter-spacing:0.03em;text-shadow:0 0 55px rgba(27,184,216,0.75),0 4px 32px rgba(0,0,0,0.9);">SANTOS</div></div>
+                    <div style="display:flex;align-items:stretch;gap:1%;"><div style="width:3px;background:linear-gradient(180deg,#1bb8d8,rgba(27,184,216,0.1));border-radius:2px;flex-shrink:0;"></div><div style="font-size:min(1.18vw,2.1vh);letter-spacing:0.17em;text-transform:uppercase;color:#a8dff0;line-height:1.85;">Sistemas de Informa&ccedil;&atilde;o &middot; 18 anos<br><span style="color:rgba(255,255,255,0.45);font-size:0.87em;">Sistemas de Informa&ccedil;&atilde;o &middot; Unasp-EC</span></div></div>
+                    <div style="width:20%;height:2px;background:linear-gradient(90deg,#1bb8d8,transparent);"></div>
+                    <div style="font-size:min(1.08vw,1.92vh);color:rgba(255,255,255,0.75);line-height:1.88;">Estudante de Sistemas de Informa&ccedil;&atilde;o, com interesse em <strong style="color:rgba(255,255,255,0.92);">tecnologia, inova&ccedil;&atilde;o e melhoria de processos</strong>. Dedicada, organizada e respons&aacute;vel, com compromisso com o <strong style="color:rgba(255,255,255,0.92);">aprendizado cont&iacute;nuo</strong> e o aprimoramento constante, buscando crescimento profissional e excel&ecirc;ncia em tudo que faz.</div>
+                    <div style="display:flex;flex-wrap:wrap;gap:1.6% 1.4%;">
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>Inova&ccedil;&atilde;o</div>
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>Aprendizado</div>
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Processos</div>
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Excel&ecirc;ncia</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- --- SLIDE 18  JHENIFFER SANTOS --- -->
+        <div class="slide" id="slide-18" style="background:#000;display:flex;align-items:center;justify-content:center;">
+            <div style="position:relative;width:min(100vw,177.78vh);height:min(100vh,56.25vw);flex-shrink:0;">
+                <img style="position:absolute;inset:0;width:100%;height:100%;object-fit:fill;display:block;" src="banner 8.png" alt="">
+                <div style="position:absolute;left:17%;top:13%;width:26%;aspect-ratio:1/1;border-radius:50%;box-shadow:0 0 0 3px #1bb8d8,0 0 30px 8px rgba(27,184,216,0.5),0 0 70px 16px rgba(27,184,216,0.18);pointer-events:none;"></div>
+                <img src="Jheniffer dos Santos Silva.jpeg" alt="Jheniffer Santos" style="position:absolute;left:17%;top:13%;width:26%;aspect-ratio:1/1;border-radius:50%;object-fit:cover;object-position:center 15%;pointer-events:none;">
+                <div style="position:absolute;left:46%;top:8%;width:50%;height:84%;display:flex;flex-direction:column;justify-content:space-between;pointer-events:none;">
+                    <div style="display:flex;align-items:center;gap:2%;"><div style="display:inline-flex;align-items:center;gap:7px;padding:0.55% 2%;background:rgba(27,184,216,0.1);border:1px solid rgba(27,184,216,0.65);border-radius:3px;box-shadow:0 0 14px rgba(27,184,216,0.25);"><svg width="12" height="12" viewBox="0 0 24 24" fill="#1bb8d8"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><span style="font-family:'Bebas Neue',Impact,sans-serif;font-size:min(1.6vw,2.84vh);letter-spacing:0.35em;color:#1bb8d8;text-shadow:0 0 12px rgba(27,184,216,0.8);">FREEZE</span></div><div style="height:1px;flex:1;background:linear-gradient(90deg,rgba(27,184,216,0.45),transparent);"></div><span style="font-size:min(0.75vw,1.33vh);letter-spacing:0.28em;color:rgba(255,255,255,0.28);">GRUPO 03</span></div>
+                    <div><div style="font-family:'Bebas Neue',Impact,'Arial Narrow',sans-serif;font-size:min(10.5vw,18.67vh);color:#fff;line-height:0.85;letter-spacing:0.03em;text-shadow:0 4px 32px rgba(0,0,0,0.95);">JHENIFFER</div><div style="font-family:'Bebas Neue',Impact,'Arial Narrow',sans-serif;font-size:min(10.5vw,18.67vh);color:#1bb8d8;line-height:0.85;letter-spacing:0.03em;text-shadow:0 0 55px rgba(27,184,216,0.75),0 4px 32px rgba(0,0,0,0.9);">SANTOS</div></div>
+                    <div style="display:flex;align-items:stretch;gap:1%;"><div style="width:3px;background:linear-gradient(180deg,#1bb8d8,rgba(27,184,216,0.1));border-radius:2px;flex-shrink:0;"></div><div style="font-size:min(1.18vw,2.1vh);letter-spacing:0.17em;text-transform:uppercase;color:#a8dff0;line-height:1.85;">Sistemas de Informa&ccedil;&atilde;o &middot; 20 anos<br><span style="color:rgba(255,255,255,0.45);font-size:0.87em;">Sistemas de Informa&ccedil;&atilde;o &middot; Unasp-EC</span></div></div>
+                    <div style="width:20%;height:2px;background:linear-gradient(90deg,#1bb8d8,transparent);"></div>
+                    <div style="font-size:min(1.08vw,1.92vh);color:rgba(255,255,255,0.75);line-height:1.88;">Movida pela <strong style="color:rgba(255,255,255,0.92);">curiosidade e pelo desejo constante de aprender</strong>, descobriu sua afinidade com <strong style="color:rgba(255,255,255,0.92);">Dados e Intelig&ecirc;ncia Artificial</strong> &mdash; transformando informa&ccedil;&otilde;es em solu&ccedil;&otilde;es estrat&eacute;gicas. Em constante desenvolvimento, busca expandir suas habilidades e gerar valor real por meio da tecnologia.</div>
+                    <div style="display:flex;flex-wrap:wrap;gap:1.6% 1.4%;">
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>Dados</div>
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 8v4l3 3"/><circle cx="18" cy="6" r="3"/></svg>Intelig&ecirc;ncia Artificial</div>
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>Aprendizado</div>
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>Crescimento</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- --- SLIDE 20  LDIA NANQUE --- -->
+        <div class="slide" id="slide-20" style="background:#000;display:flex;align-items:center;justify-content:center;">
+            <div style="position:relative;width:min(100vw,177.78vh);height:min(100vh,56.25vw);flex-shrink:0;">
+                <img style="position:absolute;inset:0;width:100%;height:100%;object-fit:fill;display:block;" src="banner 8.png" alt="">
+                <div style="position:absolute;left:17%;top:13%;width:26%;aspect-ratio:1/1;border-radius:50%;box-shadow:0 0 0 3px #1bb8d8,0 0 30px 8px rgba(27,184,216,0.5),0 0 70px 16px rgba(27,184,216,0.18);pointer-events:none;"></div>
+                <img src="L&#237;dia Silva Nanque.jpeg" alt="L&#237;dia Nanque" style="position:absolute;left:17%;top:13%;width:26%;aspect-ratio:1/1;border-radius:50%;object-fit:cover;object-position:center top;pointer-events:none;">
+                <div style="position:absolute;left:46%;top:8%;width:50%;height:84%;display:flex;flex-direction:column;justify-content:space-between;pointer-events:none;">
+                    <div style="display:flex;align-items:center;gap:2%;"><div style="display:inline-flex;align-items:center;gap:7px;padding:0.55% 2%;background:rgba(27,184,216,0.1);border:1px solid rgba(27,184,216,0.65);border-radius:3px;box-shadow:0 0 14px rgba(27,184,216,0.25);"><svg width="12" height="12" viewBox="0 0 24 24" fill="#1bb8d8"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><span style="font-family:'Bebas Neue',Impact,sans-serif;font-size:min(1.6vw,2.84vh);letter-spacing:0.35em;color:#1bb8d8;text-shadow:0 0 12px rgba(27,184,216,0.8);">FREEZE</span></div><div style="height:1px;flex:1;background:linear-gradient(90deg,rgba(27,184,216,0.45),transparent);"></div><span style="font-size:min(0.75vw,1.33vh);letter-spacing:0.28em;color:rgba(255,255,255,0.28);">GRUPO 03</span></div>
+                    <div><div style="font-family:'Bebas Neue',Impact,'Arial Narrow',sans-serif;font-size:min(10.5vw,18.67vh);color:#fff;line-height:0.85;letter-spacing:0.03em;text-shadow:0 4px 32px rgba(0,0,0,0.95);">L&#205;DIA</div><div style="font-family:'Bebas Neue',Impact,'Arial Narrow',sans-serif;font-size:min(10.5vw,18.67vh);color:#1bb8d8;line-height:0.85;letter-spacing:0.03em;text-shadow:0 0 55px rgba(27,184,216,0.75),0 4px 32px rgba(0,0,0,0.9);">NANQUE</div></div>
+                    <div style="display:flex;align-items:stretch;gap:1%;"><div style="width:3px;background:linear-gradient(180deg,#1bb8d8,rgba(27,184,216,0.1));border-radius:2px;flex-shrink:0;"></div><div style="font-size:min(1.18vw,2.1vh);letter-spacing:0.17em;text-transform:uppercase;color:#a8dff0;line-height:1.85;">Tecnologia &middot; Desenvolvimento de Sistemas<br><span style="color:rgba(255,255,255,0.45);font-size:0.87em;">Sistemas de Informa&ccedil;&atilde;o &middot; Unasp-EC</span></div></div>
+                    <div style="width:20%;height:2px;background:linear-gradient(90deg,#1bb8d8,transparent);"></div>
+                    <div style="font-size:min(1.08vw,1.92vh);color:rgba(255,255,255,0.75);line-height:1.88;">Dedicada, respons&aacute;vel e sempre disposta a <strong style="color:rgba(255,255,255,0.92);">aprender coisas novas</strong>. Tenho interesse em tecnologia, inform&aacute;tica e <strong style="color:rgba(255,255,255,0.92);">desenvolvimento de sistemas</strong>. Busco adquirir conhecimentos e experi&ecirc;ncias que contribuam para minha forma&ccedil;&atilde;o acad&ecirc;mica e futura carreira.</div>
+                    <div style="display:flex;flex-wrap:wrap;gap:1.6% 1.4%;">
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>Tecnologia</div>
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>Dev de Sistemas</div>
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Crescimento</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- --- SLIDE 21  LVIA RODRIGUES --- -->
+        <div class="slide" id="slide-21" style="background:#000;display:flex;align-items:center;justify-content:center;">
+            <div style="position:relative;width:min(100vw,177.78vh);height:min(100vh,56.25vw);flex-shrink:0;">
+                <img style="position:absolute;inset:0;width:100%;height:100%;object-fit:fill;display:block;" src="banner 8.png" alt="">
+                <div style="position:absolute;left:17%;top:13%;width:26%;aspect-ratio:1/1;border-radius:50%;box-shadow:0 0 0 3px #1bb8d8,0 0 30px 8px rgba(27,184,216,0.5),0 0 70px 16px rgba(27,184,216,0.18);pointer-events:none;"></div>
+                <img src="L&#237;via Rodrigues .jpeg" alt="L&#237;via Rodrigues" style="position:absolute;left:17%;top:13%;width:26%;aspect-ratio:1/1;border-radius:50%;object-fit:cover;object-position:center top;pointer-events:none;">
+                <div style="position:absolute;left:46%;top:8%;width:50%;height:84%;display:flex;flex-direction:column;justify-content:space-between;pointer-events:none;">
+                    <div style="display:flex;align-items:center;gap:2%;"><div style="display:inline-flex;align-items:center;gap:7px;padding:0.55% 2%;background:rgba(27,184,216,0.1);border:1px solid rgba(27,184,216,0.65);border-radius:3px;box-shadow:0 0 14px rgba(27,184,216,0.25);"><svg width="12" height="12" viewBox="0 0 24 24" fill="#1bb8d8"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><span style="font-family:'Bebas Neue',Impact,sans-serif;font-size:min(1.6vw,2.84vh);letter-spacing:0.35em;color:#1bb8d8;text-shadow:0 0 12px rgba(27,184,216,0.8);">FREEZE</span></div><div style="height:1px;flex:1;background:linear-gradient(90deg,rgba(27,184,216,0.45),transparent);"></div><span style="font-size:min(0.75vw,1.33vh);letter-spacing:0.28em;color:rgba(255,255,255,0.28);">GRUPO 03</span></div>
+                    <div><div style="font-family:'Bebas Neue',Impact,'Arial Narrow',sans-serif;font-size:min(10.5vw,18.67vh);color:#fff;line-height:0.85;letter-spacing:0.03em;text-shadow:0 4px 32px rgba(0,0,0,0.95);">L&#205;VIA</div><div style="font-family:'Bebas Neue',Impact,'Arial Narrow',sans-serif;font-size:min(10.5vw,18.67vh);color:#1bb8d8;line-height:0.85;letter-spacing:0.03em;text-shadow:0 0 55px rgba(27,184,216,0.75),0 4px 32px rgba(0,0,0,0.9);">RODRIGUES</div></div>
+                    <div style="display:flex;align-items:stretch;gap:1%;"><div style="width:3px;background:linear-gradient(180deg,#1bb8d8,rgba(27,184,216,0.1));border-radius:2px;flex-shrink:0;"></div><div style="font-size:min(1.18vw,2.1vh);letter-spacing:0.17em;text-transform:uppercase;color:#a8dff0;line-height:1.85;">An&aacute;lise de Sistemas &middot; Dados<br><span style="color:rgba(255,255,255,0.45);font-size:0.87em;">Sistemas de Informa&ccedil;&atilde;o &middot; Unasp-EC</span></div></div>
+                    <div style="width:20%;height:2px;background:linear-gradient(90deg,#1bb8d8,transparent);"></div>
+                    <div style="font-size:min(1.08vw,1.92vh);color:rgba(255,255,255,0.75);line-height:1.88;">Com experi&ecirc;ncia em ambientes institucionais, atuando com <strong style="color:rgba(255,255,255,0.92);">controle de dados e organiza&ccedil;&atilde;o de processos</strong>. Busco desenvolver comunica&ccedil;&atilde;o e <strong style="color:rgba(255,255,255,0.92);">pensamento anal&iacute;tico</strong>, sempre com foco em aprendizado cont&iacute;nuo e evolu&ccedil;&atilde;o profissional.</div>
+                    <div style="display:flex;flex-wrap:wrap;gap:1.6% 1.4%;">
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="9" height="9"/><rect x="13" y="2" width="9" height="9"/><rect x="13" y="13" width="9" height="9"/><rect x="2" y="13" width="9" height="9"/></svg>An&aacute;lise de Dados</div>
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>Processos</div>
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Aprendizado Cont&iacute;nuo</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- --- SLIDE 25  PEDRO OLRIA --- -->
+        <div class="slide" id="slide-grupo3" style="background:#000;">
+            <img class="slide-img" src="grupo 3.png" alt="Grupo 3">
+        </div>
+
+        <!-- --- SLIDE BANNER GRUPO 4  TEAMLANCER --- -->
+        <div class="slide" id="slide-27" style="background:#000;display:flex;align-items:center;justify-content:center;">
+            <div style="position:relative;width:min(100vw,177.78vh);height:min(100vh,56.25vw);flex-shrink:0;">
+                <img style="position:absolute;inset:0;width:100%;height:100%;object-fit:fill;display:block;" src="banner 8.png" alt="">
+                <div style="position:absolute;left:17%;top:13%;width:26%;aspect-ratio:1/1;border-radius:50%;box-shadow:0 0 0 3px #1bb8d8,0 0 30px 8px rgba(27,184,216,0.5),0 0 70px 16px rgba(27,184,216,0.18);pointer-events:none;"></div>
+                <img src="Vitor Hugo.jpeg" alt="Vitor Hugo" style="position:absolute;left:17%;top:13%;width:26%;aspect-ratio:1/1;border-radius:50%;object-fit:cover;object-position:center top;pointer-events:none;">
+                <div style="position:absolute;left:46%;top:8%;width:50%;height:84%;display:flex;flex-direction:column;justify-content:space-between;pointer-events:none;">
+                    <div style="display:flex;align-items:center;gap:2%;"><div style="display:inline-flex;align-items:center;gap:7px;padding:0.55% 2%;background:rgba(27,184,216,0.1);border:1px solid rgba(27,184,216,0.65);border-radius:3px;box-shadow:0 0 14px rgba(27,184,216,0.25);"><svg width="12" height="12" viewBox="0 0 24 24" fill="#1bb8d8"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><span style="font-family:'Bebas Neue',Impact,sans-serif;font-size:min(1.6vw,2.84vh);letter-spacing:0.35em;color:#1bb8d8;text-shadow:0 0 12px rgba(27,184,216,0.8);">M&Oacute;DULO S&Ecirc;NIOR</span></div><div style="height:1px;flex:1;background:linear-gradient(90deg,rgba(27,184,216,0.45),transparent);"></div><span style="font-size:min(0.75vw,1.33vh);letter-spacing:0.28em;color:rgba(255,255,255,0.28);">UNASP-EC</span></div>
+                    <div><div style="font-family:'Bebas Neue',Impact,'Arial Narrow',sans-serif;font-size:min(10.5vw,18.67vh);color:#fff;line-height:0.85;letter-spacing:0.03em;text-shadow:0 4px 32px rgba(0,0,0,0.95);">VITOR</div><div style="font-family:'Bebas Neue',Impact,'Arial Narrow',sans-serif;font-size:min(10.5vw,18.67vh);color:#1bb8d8;line-height:0.85;letter-spacing:0.03em;text-shadow:0 0 55px rgba(27,184,216,0.75),0 4px 32px rgba(0,0,0,0.9);">HUGO</div></div>
+                    <div style="display:flex;align-items:stretch;gap:1%;"><div style="width:3px;background:linear-gradient(180deg,#1bb8d8,rgba(27,184,216,0.1));border-radius:2px;flex-shrink:0;"></div><div style="font-size:min(1.18vw,2.1vh);letter-spacing:0.17em;text-transform:uppercase;color:#a8dff0;line-height:1.85;">Sistemas de Informa&ccedil;&atilde;o &middot; 19 anos<br><span style="color:rgba(255,255,255,0.45);font-size:0.87em;">Sistemas de Informa&ccedil;&atilde;o &middot; Unasp-EC</span></div></div>
+                    <div style="width:20%;height:2px;background:linear-gradient(90deg,#1bb8d8,transparent);"></div>
+                    <div style="font-size:min(1.08vw,1.92vh);color:rgba(255,255,255,0.75);line-height:1.88;">Meu sonho &eacute; trabalhar na &aacute;rea de tecnologia, construindo uma <strong style="color:rgba(255,255,255,0.92);">carreira s&oacute;lida</strong> e conquistando uma boa qualidade de vida. Tamb&eacute;m quero desenvolver <strong style="color:rgba(255,255,255,0.92);">projetos e solu&ccedil;&otilde;es</strong> que possam facilitar e melhorar a vida das pessoas.</div>
+                    <div style="display:flex;flex-wrap:wrap;gap:1.6% 1.4%;">
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>Sistemas de TI</div>
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>Desenvolvimento</div>
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>Inova&ccedil;&atilde;o</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- --- SLIDE BANNER GRUPO 2 --- -->
+        <div class="slide" id="slide-g2-01" style="background:#000;display:flex;align-items:center;justify-content:center;">
+            <div style="position:relative;width:min(100vw,177.78vh);height:min(100vh,56.25vw);flex-shrink:0;">
+                <img style="position:absolute;inset:0;width:100%;height:100%;object-fit:fill;display:block;" src="banner 8.png" alt="">
+                <div style="position:absolute;left:17%;top:13%;width:26%;aspect-ratio:1/1;border-radius:50%;box-shadow:0 0 0 3px #1bb8d8,0 0 30px 8px rgba(27,184,216,0.5),0 0 70px 16px rgba(27,184,216,0.18);pointer-events:none;"></div>
+                <img src="Jhonathan Delgado Pontes da Silva.jpeg" alt="Jhonathan Delgado" style="position:absolute;left:17%;top:13%;width:26%;aspect-ratio:1/1;border-radius:50%;object-fit:cover;object-position:center top;pointer-events:none;">
+                <div style="position:absolute;left:46%;top:8%;width:50%;height:84%;display:flex;flex-direction:column;justify-content:space-between;pointer-events:none;">
+                    <div style="display:flex;align-items:center;gap:2%;"><div style="display:inline-flex;align-items:center;gap:7px;padding:0.55% 2%;background:rgba(27,184,216,0.1);border:1px solid rgba(27,184,216,0.65);border-radius:3px;box-shadow:0 0 14px rgba(27,184,216,0.25);"><svg width="12" height="12" viewBox="0 0 24 24" fill="#1bb8d8"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><span style="font-family:'Bebas Neue',Impact,sans-serif;font-size:min(1.6vw,2.84vh);letter-spacing:0.35em;color:#1bb8d8;text-shadow:0 0 12px rgba(27,184,216,0.8);">M&Oacute;DULO S&Ecirc;NIOR</span></div><div style="height:1px;flex:1;background:linear-gradient(90deg,rgba(27,184,216,0.45),transparent);"></div><span style="font-size:min(0.75vw,1.33vh);letter-spacing:0.28em;color:rgba(255,255,255,0.28);">UNASP-EC</span></div>
+                    <div><div style="font-family:'Bebas Neue',Impact,'Arial Narrow',sans-serif;font-size:min(10.5vw,18.67vh);color:#fff;line-height:0.85;letter-spacing:0.03em;text-shadow:0 4px 32px rgba(0,0,0,0.95);">JHONATHAN</div><div style="font-family:'Bebas Neue',Impact,'Arial Narrow',sans-serif;font-size:min(10.5vw,18.67vh);color:#1bb8d8;line-height:0.85;letter-spacing:0.03em;text-shadow:0 0 55px rgba(27,184,216,0.75),0 4px 32px rgba(0,0,0,0.9);">DELGADO</div></div>
+                    <div style="display:flex;align-items:stretch;gap:1%;"><div style="width:3px;background:linear-gradient(180deg,#1bb8d8,rgba(27,184,216,0.1));border-radius:2px;flex-shrink:0;"></div><div style="font-size:min(1.18vw,2.1vh);letter-spacing:0.17em;text-transform:uppercase;color:#a8dff0;line-height:1.85;">Sistemas de Informa&ccedil;&atilde;o &middot; 19 anos<br><span style="color:rgba(255,255,255,0.45);font-size:0.87em;">Sistemas de Informa&ccedil;&atilde;o &middot; Unasp-EC</span></div></div>
+                    <div style="width:20%;height:2px;background:linear-gradient(90deg,#1bb8d8,transparent);"></div>
+                    <div style="font-size:min(1.08vw,1.92vh);color:rgba(255,255,255,0.75);line-height:1.88;">Busco construir uma <strong style="color:rgba(255,255,255,0.92);">carreira de sucesso em tecnologia</strong> e conquistar uma vida melhor para mim e minha fam&iacute;lia, retribuindo todo o apoio recebido. Tenho <strong style="color:rgba(255,255,255,0.92);">Deus como maior inspira&ccedil;&atilde;o</strong> e a f&eacute; como pilar para seguir firme em busca dos meus sonhos.</div>
+                    <div style="display:flex;flex-wrap:wrap;gap:1.6% 1.4%;">
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>Tecnologia</div>
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>Fam&iacute;lia</div>
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>F&eacute; &amp; Prop&oacute;sito</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- --- GRUPO 2  MAURICIO FRANCESCHET --- -->
+        <div class="slide" id="slide-g2-02" style="background:#000;display:flex;align-items:center;justify-content:center;">
+            <div style="position:relative;width:min(100vw,177.78vh);height:min(100vh,56.25vw);flex-shrink:0;">
+                <img style="position:absolute;inset:0;width:100%;height:100%;object-fit:fill;display:block;" src="banner 8.png" alt="">
+                <div style="position:absolute;left:17%;top:13%;width:26%;aspect-ratio:1/1;border-radius:50%;box-shadow:0 0 0 3px #1bb8d8,0 0 30px 8px rgba(27,184,216,0.5),0 0 70px 16px rgba(27,184,216,0.18);pointer-events:none;"></div>
+                <img src="Mauricio Fernandes Franceschet .jpeg" alt="Mauricio Franceschet" style="position:absolute;left:17%;top:13%;width:26%;aspect-ratio:1/1;border-radius:50%;object-fit:cover;object-position:center top;pointer-events:none;">
+                <div style="position:absolute;left:46%;top:8%;width:50%;height:84%;display:flex;flex-direction:column;justify-content:space-between;pointer-events:none;">
+                    <div style="display:flex;align-items:center;gap:2%;"><div style="display:inline-flex;align-items:center;gap:7px;padding:0.55% 2%;background:rgba(27,184,216,0.1);border:1px solid rgba(27,184,216,0.65);border-radius:3px;box-shadow:0 0 14px rgba(27,184,216,0.25);"><svg width="12" height="12" viewBox="0 0 24 24" fill="#1bb8d8"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><span style="font-family:'Bebas Neue',Impact,sans-serif;font-size:min(1.6vw,2.84vh);letter-spacing:0.35em;color:#1bb8d8;text-shadow:0 0 12px rgba(27,184,216,0.8);">M&Oacute;DULO S&Ecirc;NIOR</span></div><div style="height:1px;flex:1;background:linear-gradient(90deg,rgba(27,184,216,0.45),transparent);"></div><span style="font-size:min(0.75vw,1.33vh);letter-spacing:0.28em;color:rgba(255,255,255,0.28);">UNASP-EC</span></div>
+                    <div><div style="font-family:'Bebas Neue',Impact,'Arial Narrow',sans-serif;font-size:min(10.5vw,18.67vh);color:#fff;line-height:0.85;letter-spacing:0.03em;text-shadow:0 4px 32px rgba(0,0,0,0.95);">MAURICIO</div><div style="font-family:'Bebas Neue',Impact,'Arial Narrow',sans-serif;font-size:min(10.5vw,18.67vh);color:#1bb8d8;line-height:0.85;letter-spacing:0.03em;text-shadow:0 0 55px rgba(27,184,216,0.75),0 4px 32px rgba(0,0,0,0.9);">FRANCESCHET</div></div>
+                    <div style="display:flex;align-items:stretch;gap:1%;"><div style="width:3px;background:linear-gradient(180deg,#1bb8d8,rgba(27,184,216,0.1));border-radius:2px;flex-shrink:0;"></div><div style="font-size:min(1.18vw,2.1vh);letter-spacing:0.17em;text-transform:uppercase;color:#a8dff0;line-height:1.85;">Graduando em Sistemas de Informa&ccedil;&atilde;o &middot; 19 anos<br><span style="color:rgba(255,255,255,0.45);font-size:0.87em;">Sistemas de Informa&ccedil;&atilde;o &middot; Unasp-EC</span></div></div>
+                    <div style="width:20%;height:2px;background:linear-gradient(90deg,#1bb8d8,transparent);"></div>
+                    <div style="font-size:min(1.08vw,1.92vh);color:rgba(255,255,255,0.75);line-height:1.88;">Tenho como grande meta evoluir no mercado de tecnologia, consolidando uma trajet&oacute;ria profissional de sucesso que me proporcione <strong style="color:rgba(255,255,255,0.92);">estabilidade e bem estar</strong>. Meu prop&oacute;sito &eacute; criar <strong style="color:rgba(255,255,255,0.92);">sistemas e inova&ccedil;&otilde;es</strong> que simplifiquem o cotidiano e gerem um <strong style="color:rgba(255,255,255,0.92);">impacto positivo na sociedade</strong>.</div>
+                    <div style="display:flex;flex-wrap:wrap;gap:1.6% 1.4%;">
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>Sistemas</div>
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>Inova&ccedil;&atilde;o</div>
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Impacto Social</div>
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>Desenvolvimento</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- --- GRUPO 2  MARIA CLARA --- -->
+        <div class="slide" id="slide-g2-03" style="background:#000;display:flex;align-items:center;justify-content:center;">
+            <div style="position:relative;width:min(100vw,177.78vh);height:min(100vh,56.25vw);flex-shrink:0;">
+                <img style="position:absolute;inset:0;width:100%;height:100%;object-fit:fill;display:block;" src="banner 8.png" alt="">
+                <div style="position:absolute;left:17%;top:13%;width:26%;aspect-ratio:1/1;border-radius:50%;box-shadow:0 0 0 3px #1bb8d8,0 0 30px 8px rgba(27,184,216,0.5),0 0 70px 16px rgba(27,184,216,0.18);pointer-events:none;"></div>
+                <img src="Maria Clara.jpeg" alt="Maria Clara" style="position:absolute;left:17%;top:13%;width:26%;aspect-ratio:1/1;border-radius:50%;object-fit:cover;object-position:center 20%;pointer-events:none;">
+                <div style="position:absolute;left:46%;top:8%;width:50%;height:84%;display:flex;flex-direction:column;justify-content:space-between;pointer-events:none;">
+                    <div style="display:flex;align-items:center;gap:2%;"><div style="display:inline-flex;align-items:center;gap:7px;padding:0.55% 2%;background:rgba(27,184,216,0.1);border:1px solid rgba(27,184,216,0.65);border-radius:3px;box-shadow:0 0 14px rgba(27,184,216,0.25);"><svg width="12" height="12" viewBox="0 0 24 24" fill="#1bb8d8"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><span style="font-family:'Bebas Neue',Impact,sans-serif;font-size:min(1.6vw,2.84vh);letter-spacing:0.35em;color:#1bb8d8;text-shadow:0 0 12px rgba(27,184,216,0.8);">M&Oacute;DULO S&Ecirc;NIOR</span></div><div style="height:1px;flex:1;background:linear-gradient(90deg,rgba(27,184,216,0.45),transparent);"></div><span style="font-size:min(0.75vw,1.33vh);letter-spacing:0.28em;color:rgba(255,255,255,0.28);">UNASP-EC</span></div>
+                    <div><div style="font-family:'Bebas Neue',Impact,'Arial Narrow',sans-serif;font-size:min(10.5vw,18.67vh);color:#fff;line-height:0.85;letter-spacing:0.03em;text-shadow:0 4px 32px rgba(0,0,0,0.95);">MARIA</div><div style="font-family:'Bebas Neue',Impact,'Arial Narrow',sans-serif;font-size:min(10.5vw,18.67vh);color:#1bb8d8;line-height:0.85;letter-spacing:0.03em;text-shadow:0 0 55px rgba(27,184,216,0.75),0 4px 32px rgba(0,0,0,0.9);">CLARA</div></div>
+                    <div style="display:flex;align-items:stretch;gap:1%;"><div style="width:3px;background:linear-gradient(180deg,#1bb8d8,rgba(27,184,216,0.1));border-radius:2px;flex-shrink:0;"></div><div style="font-size:min(1.18vw,2.1vh);letter-spacing:0.17em;text-transform:uppercase;color:#a8dff0;line-height:1.85;">Sistemas de Informa&ccedil;&atilde;o &middot; 20 anos<br><span style="color:rgba(255,255,255,0.45);font-size:0.87em;">Sistemas de Informa&ccedil;&atilde;o &middot; Unasp-EC</span></div></div>
+                    <div style="width:20%;height:2px;background:linear-gradient(90deg,#1bb8d8,transparent);"></div>
+                    <div style="font-size:min(1.08vw,1.92vh);color:rgba(255,255,255,0.75);line-height:1.88;">Gosto de desafios e de aprender coisas novas. Sonho em construir uma <strong style="color:rgba(255,255,255,0.92);">carreira internacional</strong>, trabalhar em uma <strong style="color:rgba(255,255,255,0.92);">multinacional</strong> e ocupar <strong style="color:rgba(255,255,255,0.92);">cargos de lideran&ccedil;a</strong>.</div>
+                    <div style="display:flex;flex-wrap:wrap;gap:1.6% 1.4%;">
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>Carreira Internacional</div>
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Lideran&ccedil;a</div>
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Multinacional</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- --- GRUPO 2  MATEUS BASTOS --- -->
+        <div class="slide" id="slide-g2-04" style="background:#000;display:flex;align-items:center;justify-content:center;">
+            <div style="position:relative;width:min(100vw,177.78vh);height:min(100vh,56.25vw);flex-shrink:0;">
+                <img style="position:absolute;inset:0;width:100%;height:100%;object-fit:fill;display:block;" src="banner 8.png" alt="">
+                <div style="position:absolute;left:17%;top:13%;width:26%;aspect-ratio:1/1;border-radius:50%;box-shadow:0 0 0 3px #1bb8d8,0 0 30px 8px rgba(27,184,216,0.5),0 0 70px 16px rgba(27,184,216,0.18);pointer-events:none;"></div>
+                <img src="Mateus Bastos.jpeg" alt="Mateus Bastos" style="position:absolute;left:17%;top:13%;width:26%;aspect-ratio:1/1;border-radius:50%;object-fit:cover;object-position:center top;pointer-events:none;">
+                <div style="position:absolute;left:46%;top:8%;width:50%;height:84%;display:flex;flex-direction:column;justify-content:space-between;pointer-events:none;">
+                    <div style="display:flex;align-items:center;gap:2%;"><div style="display:inline-flex;align-items:center;gap:7px;padding:0.55% 2%;background:rgba(27,184,216,0.1);border:1px solid rgba(27,184,216,0.65);border-radius:3px;box-shadow:0 0 14px rgba(27,184,216,0.25);"><svg width="12" height="12" viewBox="0 0 24 24" fill="#1bb8d8"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><span style="font-family:'Bebas Neue',Impact,sans-serif;font-size:min(1.6vw,2.84vh);letter-spacing:0.35em;color:#1bb8d8;text-shadow:0 0 12px rgba(27,184,216,0.8);">M&Oacute;DULO S&Ecirc;NIOR</span></div><div style="height:1px;flex:1;background:linear-gradient(90deg,rgba(27,184,216,0.45),transparent);"></div><span style="font-size:min(0.75vw,1.33vh);letter-spacing:0.28em;color:rgba(255,255,255,0.28);">UNASP-EC</span></div>
+                    <div><div style="font-family:'Bebas Neue',Impact,'Arial Narrow',sans-serif;font-size:min(10.5vw,18.67vh);color:#fff;line-height:0.85;letter-spacing:0.03em;text-shadow:0 4px 32px rgba(0,0,0,0.95);">MATEUS</div><div style="font-family:'Bebas Neue',Impact,'Arial Narrow',sans-serif;font-size:min(10.5vw,18.67vh);color:#1bb8d8;line-height:0.85;letter-spacing:0.03em;text-shadow:0 0 55px rgba(27,184,216,0.75),0 4px 32px rgba(0,0,0,0.9);">BASTOS</div></div>
+                    <div style="display:flex;align-items:stretch;gap:1%;"><div style="width:3px;background:linear-gradient(180deg,#1bb8d8,rgba(27,184,216,0.1));border-radius:2px;flex-shrink:0;"></div><div style="font-size:min(1.18vw,2.1vh);letter-spacing:0.17em;text-transform:uppercase;color:#a8dff0;line-height:1.85;">Tecnologia da Informa&ccedil;&atilde;o &middot; 19 anos<br><span style="color:rgba(255,255,255,0.45);font-size:0.87em;">Sistemas de Informa&ccedil;&atilde;o &middot; Unasp-EC</span></div></div>
+                    <div style="width:20%;height:2px;background:linear-gradient(90deg,#1bb8d8,transparent);"></div>
+                    <div style="font-size:min(1.08vw,1.92vh);color:rgba(255,255,255,0.75);line-height:1.88;">Sou estudante de <strong style="color:rgba(255,255,255,0.92);">Tecnologia da Informa&ccedil;&atilde;o</strong> e tenho interesse em <strong style="color:rgba(255,255,255,0.92);">programa&ccedil;&atilde;o</strong>, <strong style="color:rgba(255,255,255,0.92);">desenvolvimento de aplica&ccedil;&otilde;es</strong> e novas tecnologias. Gosto de aprender coisas novas, explorar diferentes linguagens de programa&ccedil;&atilde;o e desenvolver projetos que me permitam colocar meus conhecimentos em pr&aacute;tica. Meu objetivo &eacute; construir uma carreira s&oacute;lida na &aacute;rea de tecnologia, evoluindo constantemente minhas habilidades e criando solu&ccedil;&otilde;es que possam facilitar tarefas, resolver problemas e melhorar a <strong style="color:rgba(255,255,255,0.92);">experi&ecirc;ncia das pessoas com a tecnologia</strong>.</div>
+                    <div style="display:flex;flex-wrap:wrap;gap:1.6% 1.4%;">
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>Programa&ccedil;&atilde;o</div>
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>Dev de Apps</div>
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>Novas Tecnologias</div>
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>Desenvolvimento</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- --- SLIDE BANNER GRUPO 5  MONEYGUY --- -->
+        <div class="slide" id="slide-grupo4" style="background:#000;">
+            <img class="slide-img" src="grupo 4.png" alt="Grupo 4  TeamLancer">
+        </div>
+
+        <!-- --- GRUPO 4  GUILHERME BARRETO --- -->
+        <div class="slide" id="slide-14" style="background:#000;display:flex;align-items:center;justify-content:center;">
+            <div style="position:relative;width:min(100vw,177.78vh);height:min(100vh,56.25vw);flex-shrink:0;">
+                <img style="position:absolute;inset:0;width:100%;height:100%;object-fit:fill;display:block;" src="banner 8.png" alt="">
+                <div style="position:absolute;left:17%;top:13%;width:26%;aspect-ratio:1/1;border-radius:50%;box-shadow:0 0 0 3px #1bb8d8,0 0 30px 8px rgba(27,184,216,0.5),0 0 70px 16px rgba(27,184,216,0.18);pointer-events:none;"></div>
+                <img src="Guilherme Luz.jpeg" alt="Guilherme Barreto" style="position:absolute;left:17%;top:13%;width:26%;aspect-ratio:1/1;border-radius:50%;object-fit:cover;object-position:center top;pointer-events:none;">
+                <div style="position:absolute;left:46%;top:8%;width:50%;height:84%;display:flex;flex-direction:column;justify-content:space-between;pointer-events:none;">
+                    <div style="display:flex;align-items:center;gap:2%;"><div style="display:inline-flex;align-items:center;gap:7px;padding:0.55% 2%;background:rgba(27,184,216,0.1);border:1px solid rgba(27,184,216,0.65);border-radius:3px;box-shadow:0 0 14px rgba(27,184,216,0.25);"><svg width="12" height="12" viewBox="0 0 24 24" fill="#1bb8d8"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><span style="font-family:'Bebas Neue',Impact,sans-serif;font-size:min(1.6vw,2.84vh);letter-spacing:0.35em;color:#1bb8d8;text-shadow:0 0 12px rgba(27,184,216,0.8);">TEAMLANCER</span></div><div style="height:1px;flex:1;background:linear-gradient(90deg,rgba(27,184,216,0.45),transparent);"></div><span style="font-size:min(0.75vw,1.33vh);letter-spacing:0.28em;color:rgba(255,255,255,0.28);">GRUPO 04</span></div>
+                    <div><div style="font-family:'Bebas Neue',Impact,'Arial Narrow',sans-serif;font-size:min(10.5vw,18.67vh);color:#fff;line-height:0.85;letter-spacing:0.03em;text-shadow:0 4px 32px rgba(0,0,0,0.95);">GUILHERME</div><div style="font-family:'Bebas Neue',Impact,'Arial Narrow',sans-serif;font-size:min(10.5vw,18.67vh);color:#1bb8d8;line-height:0.85;letter-spacing:0.03em;text-shadow:0 0 55px rgba(27,184,216,0.75),0 4px 32px rgba(0,0,0,0.9);">BARRETO</div></div>
+                    <div style="display:flex;align-items:stretch;gap:1%;"><div style="width:3px;background:linear-gradient(180deg,#1bb8d8,rgba(27,184,216,0.1));border-radius:2px;flex-shrink:0;"></div><div style="font-size:min(1.18vw,2.1vh);letter-spacing:0.17em;text-transform:uppercase;color:#a8dff0;line-height:1.85;">Engenharia de Software &middot; 20 anos<br><span style="color:rgba(255,255,255,0.45);font-size:0.87em;">Sistemas de Informa&ccedil;&atilde;o &middot; Unasp-EC</span></div></div>
+                    <div style="width:20%;height:2px;background:linear-gradient(90deg,#1bb8d8,transparent);"></div>
+                    <div style="font-size:min(1.08vw,1.92vh);color:rgba(255,255,255,0.75);line-height:1.88;">Estudante de <strong style="color:rgba(255,255,255,0.92);">Engenharia de Software</strong> e apaixonado por tecnologia. Meu objetivo &eacute; construir uma carreira s&oacute;lida na &aacute;rea de <strong style="color:rgba(255,255,255,0.92);">desenvolvimento de software</strong>, criando solu&ccedil;&otilde;es inovadoras que facilitem o dia a dia das pessoas e gerem valor para empresas e usu&aacute;rios.</div>
+                    <div style="display:flex;flex-wrap:wrap;gap:1.6% 1.4%;">
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>Dev de Software</div>
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>Inova&ccedil;&atilde;o</div>
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Tecnologia</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- --- SLIDE 15  HENRIQUE MACEDO --- -->
+        <div class="slide" id="slide-g4-02" style="background:#000;display:flex;align-items:center;justify-content:center;">
+            <div style="position:relative;width:min(100vw,177.78vh);height:min(100vh,56.25vw);flex-shrink:0;">
+                <img style="position:absolute;inset:0;width:100%;height:100%;object-fit:fill;display:block;" src="banner 8.png" alt="">
+                <div style="position:absolute;left:17%;top:13%;width:26%;aspect-ratio:1/1;border-radius:50%;box-shadow:0 0 0 3px #1bb8d8,0 0 30px 8px rgba(27,184,216,0.5),0 0 70px 16px rgba(27,184,216,0.18);pointer-events:none;"></div>
+                <img src="Antonio Augusto Rodrigues Soares Júnior.jpeg" alt="Antonio Augusto" style="position:absolute;left:17%;top:13%;width:26%;aspect-ratio:1/1;border-radius:50%;object-fit:cover;object-position:center 20%;pointer-events:none;">
+                <div style="position:absolute;left:46%;top:8%;width:50%;height:84%;display:flex;flex-direction:column;justify-content:space-between;pointer-events:none;">
+                    <div style="display:flex;align-items:center;gap:2%;"><div style="display:inline-flex;align-items:center;gap:7px;padding:0.55% 2%;background:rgba(27,184,216,0.1);border:1px solid rgba(27,184,216,0.65);border-radius:3px;box-shadow:0 0 14px rgba(27,184,216,0.25);"><svg width="12" height="12" viewBox="0 0 24 24" fill="#1bb8d8"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><span style="font-family:'Bebas Neue',Impact,sans-serif;font-size:min(1.6vw,2.84vh);letter-spacing:0.35em;color:#1bb8d8;text-shadow:0 0 12px rgba(27,184,216,0.8);">TEAMLANCER</span></div><div style="height:1px;flex:1;background:linear-gradient(90deg,rgba(27,184,216,0.45),transparent);"></div><span style="font-size:min(0.75vw,1.33vh);letter-spacing:0.28em;color:rgba(255,255,255,0.28);">GRUPO 04</span></div>
+                    <div><div style="font-family:'Bebas Neue',Impact,'Arial Narrow',sans-serif;font-size:min(10.5vw,18.67vh);color:#fff;line-height:0.85;letter-spacing:0.03em;text-shadow:0 4px 32px rgba(0,0,0,0.95);">ANTONIO</div><div style="font-family:'Bebas Neue',Impact,'Arial Narrow',sans-serif;font-size:min(10.5vw,18.67vh);color:#1bb8d8;line-height:0.85;letter-spacing:0.03em;text-shadow:0 0 55px rgba(27,184,216,0.75),0 4px 32px rgba(0,0,0,0.9);">AUGUSTO</div></div>
+                    <div style="display:flex;align-items:stretch;gap:1%;"><div style="width:3px;background:linear-gradient(180deg,#1bb8d8,rgba(27,184,216,0.1));border-radius:2px;flex-shrink:0;"></div><div style="font-size:min(1.18vw,2.1vh);letter-spacing:0.17em;text-transform:uppercase;color:#a8dff0;line-height:1.85;">Tecnologia &amp; Criatividade<br><span style="color:rgba(255,255,255,0.45);font-size:0.87em;">Sistemas de Informa&ccedil;&atilde;o &middot; Unasp-EC</span></div></div>
+                    <div style="width:20%;height:2px;background:linear-gradient(90deg,#1bb8d8,transparent);"></div>
+                    <div style="font-size:min(1.08vw,1.92vh);color:rgba(255,255,255,0.75);line-height:1.88;">Movido por <strong style="color:rgba(255,255,255,0.92);">ideias, criatividade e vontade de aprender</strong>. Apaixonado por tecnologia, inova&ccedil;&atilde;o, m&uacute;sica e escrita. Acredita que o conhecimento aliado &agrave; criatividade tem o poder de <strong style="color:rgba(255,255,255,0.92);">gerar mudan&ccedil;as positivas</strong> e abrir caminhos para novas oportunidades.</div>
+                    <div style="display:flex;flex-wrap:wrap;gap:1.6% 1.4%;">
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>Inova&ccedil;&atilde;o</div>
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>Criatividade</div>
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>M&uacute;sica</div>
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Tecnologia</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- --- GRUPO 4  RAPHAEL RIOS --- -->
+        <div class="slide" id="slide-g4-03" style="background:#000;display:flex;align-items:center;justify-content:center;">
+            <div style="position:relative;width:min(100vw,177.78vh);height:min(100vh,56.25vw);flex-shrink:0;">
+                <img style="position:absolute;inset:0;width:100%;height:100%;object-fit:fill;display:block;" src="banner 8.png" alt="">
+                <div style="position:absolute;left:17%;top:13%;width:26%;aspect-ratio:1/1;border-radius:50%;box-shadow:0 0 0 3px #1bb8d8,0 0 30px 8px rgba(27,184,216,0.5),0 0 70px 16px rgba(27,184,216,0.18);pointer-events:none;"></div>
+                <img src="Raphael Rios .jpeg" alt="Raphael Rios" style="position:absolute;left:17%;top:13%;width:26%;aspect-ratio:1/1;border-radius:50%;object-fit:cover;object-position:center top;pointer-events:none;">
+                <!-- QR Code LinkedIn -->
+                <div style="position:absolute;left:30%;bottom:4%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:5px;pointer-events:none;">
+                    <img src="qr code linkedin rapha.jpeg" style="width:min(7vw,12.5vh);border:2px solid rgba(27,184,216,0.55);border-radius:6px;box-shadow:0 0 18px rgba(27,184,216,0.35);" alt="LinkedIn QR Code">
+                    <span style="font-size:min(0.62vw,1.1vh);letter-spacing:0.22em;color:rgba(27,184,216,0.75);text-transform:uppercase;">LinkedIn</span>
+                </div>
+                <div style="position:absolute;left:46%;top:8%;width:50%;height:84%;display:flex;flex-direction:column;justify-content:space-between;pointer-events:none;">
+                    <div style="display:flex;align-items:center;gap:2%;"><div style="display:inline-flex;align-items:center;gap:7px;padding:0.55% 2%;background:rgba(27,184,216,0.1);border:1px solid rgba(27,184,216,0.65);border-radius:3px;box-shadow:0 0 14px rgba(27,184,216,0.25);"><svg width="12" height="12" viewBox="0 0 24 24" fill="#1bb8d8"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><span style="font-family:'Bebas Neue',Impact,sans-serif;font-size:min(1.6vw,2.84vh);letter-spacing:0.35em;color:#1bb8d8;text-shadow:0 0 12px rgba(27,184,216,0.8);">TEAMLANCER</span></div><div style="height:1px;flex:1;background:linear-gradient(90deg,rgba(27,184,216,0.45),transparent);"></div><span style="font-size:min(0.75vw,1.33vh);letter-spacing:0.28em;color:rgba(255,255,255,0.28);">GRUPO 04</span></div>
+                    <div><div style="font-family:'Bebas Neue',Impact,'Arial Narrow',sans-serif;font-size:min(10.5vw,18.67vh);color:#fff;line-height:0.85;letter-spacing:0.03em;text-shadow:0 4px 32px rgba(0,0,0,0.95);">RAPHAEL</div><div style="font-family:'Bebas Neue',Impact,'Arial Narrow',sans-serif;font-size:min(10.5vw,18.67vh);color:#1bb8d8;line-height:0.85;letter-spacing:0.03em;text-shadow:0 0 55px rgba(27,184,216,0.75),0 4px 32px rgba(0,0,0,0.9);">RIOS</div></div>
+                    <div style="display:flex;align-items:stretch;gap:1%;"><div style="width:3px;background:linear-gradient(180deg,#1bb8d8,rgba(27,184,216,0.1));border-radius:2px;flex-shrink:0;"></div><div style="font-size:min(1.18vw,2.1vh);letter-spacing:0.17em;text-transform:uppercase;color:#a8dff0;line-height:1.85;">Estagi&aacute;rio na Bosch &middot; 18 anos<br><span style="color:rgba(255,255,255,0.45);font-size:0.87em;">Sistemas de Informa&ccedil;&atilde;o &middot; Unasp-EC</span></div></div>
+                    <div style="width:20%;height:2px;background:linear-gradient(90deg,#1bb8d8,transparent);"></div>
+                    <div style="font-size:min(1.08vw,1.92vh);color:rgba(255,255,255,0.75);line-height:1.88;">Fa&ccedil;o faculdade de Sistemas de Informa&ccedil;&atilde;o e estou construindo minha carreira com foco em me tornar um <strong style="color:rgba(255,255,255,0.92);">desenvolvedor de software</strong>. Atualmente estagirio na <strong style="color:rgba(255,255,255,0.92);">Bosch</strong>, busco fortalecer minha base em programa&ccedil;&atilde;o, evoluir constantemente e conquistar oportunidades internacionais &mdash; especialmente no <strong style="color:rgba(255,255,255,0.92);">Reino Unido</strong>.</div>
+                    <div style="display:flex;flex-wrap:wrap;gap:1.6% 1.4%;">
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>Dev de Software</div>
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>Estagi&aacute;rio Bosch</div>
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>Vis&atilde;o Global</div>
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Programa&ccedil;&atilde;o</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--
+        ADICIONE NOVOS SLIDES ABAIXO NESTE PADRAO:
+
+        <!-- --- GRUPO 4  ANTONIO AUGUSTO --- --><div class="slide" id="slide-grupo5" style="background:#000;">
+            <img class="slide-img" src="grupo 5.png" alt="Grupo 5 - MoneyGuy">
+        </div>
+
+        <!-- --- SLIDE BANNER GRUPO 3 --- -->
+        <div class="slide" id="slide-16" style="background:#000;display:flex;align-items:center;justify-content:center;">
+            <div style="position:relative;width:min(100vw,177.78vh);height:min(100vh,56.25vw);flex-shrink:0;">
+                <img style="position:absolute;inset:0;width:100%;height:100%;object-fit:fill;display:block;" src="banner 8.png" alt="">
+                <div style="position:absolute;left:17%;top:13%;width:26%;aspect-ratio:1/1;border-radius:50%;box-shadow:0 0 0 3px #1bb8d8,0 0 30px 8px rgba(27,184,216,0.5),0 0 70px 16px rgba(27,184,216,0.18);pointer-events:none;"></div>
+                <img src="Isaac Yuji Miyano.jpeg" alt="Isaac Yuji" style="position:absolute;left:17%;top:13%;width:26%;aspect-ratio:1/1;border-radius:50%;object-fit:cover;object-position:center top;pointer-events:none;">
+                <div style="position:absolute;left:46%;top:8%;width:50%;height:84%;display:flex;flex-direction:column;justify-content:space-between;pointer-events:none;">
+                    <div style="display:flex;align-items:center;gap:2%;"><div style="display:inline-flex;align-items:center;gap:7px;padding:0.55% 2%;background:rgba(27,184,216,0.1);border:1px solid rgba(27,184,216,0.65);border-radius:3px;box-shadow:0 0 14px rgba(27,184,216,0.25);"><svg width="12" height="12" viewBox="0 0 24 24" fill="#1bb8d8"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><span style="font-family:'Bebas Neue',Impact,sans-serif;font-size:min(1.6vw,2.84vh);letter-spacing:0.35em;color:#1bb8d8;text-shadow:0 0 12px rgba(27,184,216,0.8);">MONEYGUY</span></div><div style="height:1px;flex:1;background:linear-gradient(90deg,rgba(27,184,216,0.45),transparent);"></div><span style="font-size:min(0.75vw,1.33vh);letter-spacing:0.28em;color:rgba(255,255,255,0.28);">GRUPO 05</span></div>
+                    <div><div style="font-family:'Bebas Neue',Impact,'Arial Narrow',sans-serif;font-size:min(10.5vw,18.67vh);color:#fff;line-height:0.85;letter-spacing:0.03em;text-shadow:0 4px 32px rgba(0,0,0,0.95);">ISAAC</div><div style="font-family:'Bebas Neue',Impact,'Arial Narrow',sans-serif;font-size:min(10.5vw,18.67vh);color:#1bb8d8;line-height:0.85;letter-spacing:0.03em;text-shadow:0 0 55px rgba(27,184,216,0.75),0 4px 32px rgba(0,0,0,0.9);">YUJI</div></div>
+                    <div style="display:flex;align-items:stretch;gap:1%;"><div style="width:3px;background:linear-gradient(180deg,#1bb8d8,rgba(27,184,216,0.1));border-radius:2px;flex-shrink:0;"></div><div style="font-size:min(1.18vw,2.1vh);letter-spacing:0.17em;text-transform:uppercase;color:#a8dff0;line-height:1.85;">Sistemas de Informa&ccedil;&atilde;o &middot; com Pedro Ol&aacute;ria<br><span style="color:rgba(255,255,255,0.45);font-size:0.87em;">Sistemas de Informa&ccedil;&atilde;o &middot; Unasp-EC</span></div></div>
+                    <div style="width:20%;height:2px;background:linear-gradient(90deg,#1bb8d8,transparent);"></div>
+                    <div style="font-size:min(1.08vw,1.92vh);color:rgba(255,255,255,0.75);line-height:1.88;">Curioso, dedicado e determinado, busco constantemente <strong style="color:rgba(255,255,255,0.92);">aprender e evoluir</strong>. Valorizo o <strong style="color:rgba(255,255,255,0.92);">conhecimento, a disciplina e a criatividade</strong>, sempre dando o meu melhor. Acredito no respeito, na colabora&ccedil;&atilde;o e na perseveran&ccedil;a como pilares para construir boas rela&ccedil;&otilde;es e alcan&ccedil;ar objetivos.</div>
+                    <div style="display:flex;flex-wrap:wrap;gap:1.6% 1.4%;">
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>Curiosidade</div>
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>Disciplina</div>
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>Criatividade</div>
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Perseveran&ccedil;a</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- --- SLIDE 17  JADE SANTOS --- -->
+        <div class="slide" id="slide-25" style="background:#000;display:flex;align-items:center;justify-content:center;">
+            <div style="position:relative;width:min(100vw,177.78vh);height:min(100vh,56.25vw);flex-shrink:0;">
+                <img style="position:absolute;inset:0;width:100%;height:100%;object-fit:fill;display:block;" src="banner 8.png" alt="">
+                <div style="position:absolute;left:17%;top:13%;width:26%;aspect-ratio:1/1;border-radius:50%;box-shadow:0 0 0 3px #1bb8d8,0 0 30px 8px rgba(27,184,216,0.5),0 0 70px 16px rgba(27,184,216,0.18);pointer-events:none;"></div>
+                <img src="Pedro Ol&#225;ria.jpeg" alt="Pedro Olária" style="position:absolute;left:17%;top:13%;width:26%;aspect-ratio:1/1;border-radius:50%;object-fit:cover;object-position:center top;pointer-events:none;">
+                <div style="position:absolute;left:46%;top:8%;width:50%;height:84%;display:flex;flex-direction:column;justify-content:space-between;pointer-events:none;">
+                    <div style="display:flex;align-items:center;gap:2%;"><div style="display:inline-flex;align-items:center;gap:7px;padding:0.55% 2%;background:rgba(27,184,216,0.1);border:1px solid rgba(27,184,216,0.65);border-radius:3px;box-shadow:0 0 14px rgba(27,184,216,0.25);"><svg width="12" height="12" viewBox="0 0 24 24" fill="#1bb8d8"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><span style="font-family:'Bebas Neue',Impact,sans-serif;font-size:min(1.6vw,2.84vh);letter-spacing:0.35em;color:#1bb8d8;text-shadow:0 0 12px rgba(27,184,216,0.8);">MONEYGUY</span></div><div style="height:1px;flex:1;background:linear-gradient(90deg,rgba(27,184,216,0.45),transparent);"></div><span style="font-size:min(0.75vw,1.33vh);letter-spacing:0.28em;color:rgba(255,255,255,0.28);">GRUPO 05</span></div>
+                    <div><div style="font-family:'Bebas Neue',Impact,'Arial Narrow',sans-serif;font-size:min(10.5vw,18.67vh);color:#fff;line-height:0.85;letter-spacing:0.03em;text-shadow:0 4px 32px rgba(0,0,0,0.95);">PEDRO</div><div style="font-family:'Bebas Neue',Impact,'Arial Narrow',sans-serif;font-size:min(10.5vw,18.67vh);color:#1bb8d8;line-height:0.85;letter-spacing:0.03em;text-shadow:0 0 55px rgba(27,184,216,0.75),0 4px 32px rgba(0,0,0,0.9);">OLARIA</div></div>
+                    <div style="display:flex;align-items:stretch;gap:1%;"><div style="width:3px;background:linear-gradient(180deg,#1bb8d8,rgba(27,184,216,0.1));border-radius:2px;flex-shrink:0;"></div><div style="font-size:min(1.18vw,2.1vh);letter-spacing:0.17em;text-transform:uppercase;color:#a8dff0;line-height:1.85;">Cyber Seguran&ccedil;a &middot; 18 anos<br><span style="color:rgba(255,255,255,0.45);font-size:0.87em;">Sistemas de Informa&ccedil;&atilde;o &middot; Unasp-EC</span></div></div>
+                    <div style="width:20%;height:2px;background:linear-gradient(90deg,#1bb8d8,transparent);"></div>
+                    <div style="font-size:min(1.08vw,1.92vh);color:rgba(255,255,255,0.75);line-height:1.88;">Animado e carismatico, amo tecnologia e espero ter uma <strong style="color:rgba(255,255,255,0.92);">vida de sucesso em Cyber Seguran&ccedil;a</strong>.</div>
+                    <div style="display:flex;flex-wrap:wrap;gap:1.6% 1.4%;">
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Cyber Seguran&ccedil;a</div>
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>Tecnologia</div>
+                        <div style="display:flex;align-items:center;gap:6px;font-size:min(0.8vw,1.42vh);letter-spacing:0.1em;text-transform:uppercase;color:#7dcce8;border:1px solid rgba(27,184,216,0.3);padding:0.75% 1.6%;border-radius:3px;background:rgba(27,184,216,0.07);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1bb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Sucesso</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- --- SLIDE 26  SAMUELL ALVES --- -->
+        
+
+    </div>
+
+    <!-- Seta anterior -->
+    <button class="nav-btn hidden" id="nav-prev" onclick="go(-1)">&#8592;</button>
+
+    <!-- Prxima seta -->
+    <button class="nav-btn" id="nav-next" onclick="go(1)">&#8594;</button>
+
+    <!-- Contador -->
+    <div id="slide-info">1 / 1</div>
+
+    <!-- Dica F12 -->
+    <div id="esc-hint">F12 &mdash; sair da apresenta&ccedil;&atilde;o</div>
+
+    <!-- udio de fundo (capa) -->
+    <audio id="bg-audio" src="audio-shark.mp3" loop preload="auto"></audio>
+</div>
+
+<!-- ?.??.??.??.??.??.??.??.??.??.??.??.??.??.? L?"GICA ?.??.??.??.??.??.??.??.??.??.??.??.??.??.? -->
+<script>
+    const allSlides = Array.from(document.querySelectorAll('.slide'));
+    let cur = 0;
+
+    /* Áudio */
+    const audio = document.getElementById('bg-audio');
+
+    function handleAudio() {
+        if (audio.paused) {
+            audio.volume = 1.0;
+            audio.play().catch(() => {});
+        }
+    }
+
+    /* Atualiza o slide visvel e os controles */
+    function refresh() {
+        allSlides.forEach((s, i) => s.classList.toggle('active', i === cur));
+        document.getElementById('slide-info').textContent =
+            (cur + 1) + ' / ' + allSlides.length;
+        document.getElementById('nav-prev')
+            .classList.toggle('hidden', cur === 0);
+        document.getElementById('nav-next')
+            .classList.toggle('hidden', cur === allSlides.length - 1);
+        handleAudio();
+    }
+
+    /* Avança ou retrocede um slide – transições cinematográficas variadas */
+    function go(dir) {
+        const n = cur + dir;
+        if (n < 0 || n >= allSlides.length) return;
+
+        const leaving  = allSlides[cur];
+        const entering = allSlides[n];
+
+        /* Esquema de animações rotativas: muda a cada grupo de slides */
+        /* 0=slide lateral, 1=zoom-out/in, 2=shrink/expand, 3=vertical cima, 4=vertical baixo, 5=flip, 6=slide lateral invertido */
+        const schemes = [
+            { out: dir>0 ? 'anim-out-left'   : 'anim-out-right',  inn: dir>0 ? 'anim-in-right'  : 'anim-in-left'   },
+            { out: 'anim-out-zoom',                                 inn: 'anim-in-zoom'                               },
+            { out: 'anim-out-shrink',                               inn: 'anim-in-expand'                             },
+            { out: 'anim-out-up',                                   inn: 'anim-in-up'                                 },
+            { out: dir>0 ? 'anim-out-left'   : 'anim-out-right',  inn: dir>0 ? 'anim-in-right'  : 'anim-in-left'   },
+            { out: 'anim-out-flip',                                 inn: 'anim-in-flip'                               },
+            { out: 'anim-out-zoom',                                 inn: dir>0 ? 'anim-in-right'  : 'anim-in-left'   },
+            { out: 'anim-out-down',                                 inn: 'anim-in-down'                               },
+        ];
+        const scheme = schemes[n % schemes.length];
+
+        /* Limpa todas as classes de animação residuais */
+        const allAnimClasses = [
+            'anim-out-left','anim-out-right','anim-out-zoom','anim-out-shrink','anim-out-up','anim-out-down','anim-out-flip',
+            'anim-in-right','anim-in-left','anim-in-zoom','anim-in-expand','anim-in-up','anim-in-down','anim-in-flip',
+            'entering-from-right','entering-from-left','leaving-left','leaving-right'
+        ];
+        leaving.classList.remove(...allAnimClasses);
+        entering.classList.remove(...allAnimClasses);
+
+        /* Saída */
+        leaving.classList.remove('active');
+        leaving.classList.add(scheme.out);
+
+        /* Entrada */
+        entering.classList.add(scheme.inn);
+        entering.classList.add('active');
+
+        /* Limpeza após animação */
+        leaving.addEventListener('animationend', function onLeave() {
+            leaving.classList.remove(...allAnimClasses);
+            leaving.removeEventListener('animationend', onLeave);
+        });
+        entering.addEventListener('animationend', function onEnter() {
+            entering.classList.remove(...allAnimClasses);
+            entering.removeEventListener('animationend', onEnter);
+        });
+
+        cur = n;
+        document.getElementById('slide-info').textContent = (cur + 1) + ' / ' + allSlides.length;
+        document.getElementById('nav-prev').classList.toggle('hidden', cur === 0);
+        document.getElementById('nav-next').classList.toggle('hidden', cur === allSlides.length - 1);
+        handleAudio();
+    }
+
+    /* Entra no modo apresenta&ccedil;&atilde;o + tela cheia */
+    function startPresentation() {
+        document.getElementById('landing').style.display = 'none';
+        document.getElementById('presentation').classList.add('active');
+        cur = 0;
+        refresh();
+
+        const root = document.documentElement;
+        const reqFS =
+            root.requestFullscreen         ||
+            root.webkitRequestFullscreen   ||
+            root.mozRequestFullScreen      ||
+            root.msRequestFullscreen;
+        if (reqFS) reqFS.call(root).catch(() => {});
+    }
+
+    /* Sai do modo apresenta&ccedil;&atilde;o + tela cheia */
+    function exitPresentation() {
+        const pres = document.getElementById('presentation');
+        if (!pres.classList.contains('active')) return;
+        pres.classList.remove('active');
+        document.getElementById('landing').style.display = 'flex';
+
+        /* Para o udio completamente */
+        audio.pause();
+        audio.currentTime = 0;
+        audio.volume = 1.0;
+
+        const exitFS =
+            document.exitFullscreen         ||
+            document.webkitExitFullscreen   ||
+            document.mozCancelFullScreen    ||
+            document.msExitFullscreen;
+        if (exitFS && document.fullscreenElement)
+            exitFS.call(document).catch(() => {});
+    }
+
+    /* Teclado */
+    document.addEventListener('keydown', function (e) {
+        const pres = document.getElementById('presentation');
+        if (!pres.classList.contains('active')) return;
+
+        switch (e.key) {
+            case 'F12':
+                e.preventDefault();
+                exitPresentation();
+                break;
+            case 'ArrowRight':
+            case ' ':
+                e.preventDefault();
+                go(1);
+                break;
+            case 'ArrowLeft':
+                e.preventDefault();
+                go(-1);
+                break;
+        }
+    });
+
+    /* Se o navegador sair do fullscreen sozinho (ex.: boto Esc), fecha a apresenta&ccedil;&atilde;o */
+    ['fullscreenchange', 'webkitfullscreenchange', 'mozfullscreenchange'].forEach(function (ev) {
+        document.addEventListener(ev, function () {
+            if (!document.fullscreenElement &&
+                !document.webkitFullscreenElement &&
+                !document.mozFullScreenElement) {
+                exitPresentation();
+            }
+        });
+    });
+
+    refresh();
+</script>
+</body>
+</html>
